@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->integer('duration_months'); // Thời lượng (tháng)
             $table->decimal('weekly_price', 15, 2); // Giá tiền mỗi tuần
+            $table->text('description')->nullable(); // Mô tả khóa học
             $table->timestamps();
             $table->softDeletes(); // Cực kỳ quan trọng để không mất file lịch sử
         });

@@ -26,6 +26,10 @@
                             <input type="number" class="form-control" id="weekly_price" name="weekly_price" required min="0" step="1000">
                         </div>
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Mô tả khóa học</label>
+                        <textarea class="form-control" id="description" name="description" rows="3" placeholder="Nhập mô tả khóa học (tùy chọn)"></textarea>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>

@@ -21,6 +21,7 @@
                             <th>Tên khóa học</th>
                             <th>Thời lượng</th>
                             <th>Giá / Tuần</th>
+                            <th>Mô tả</th>
                             <th class="text-center">Thao tác</th>
                         </tr>
                     </thead>
@@ -31,6 +32,7 @@
                                 <td class="fw-bold">{{ $course->name }}</td>
                                 <td>{{ $course->duration_months }} tháng</td>
                                 <td class="text-danger fw-bold">{{ number_format($course->weekly_price, 0, ',', '.') }} đ</td>
+                                <td>{{ $course->description }}</td>
                                 <td class="text-center">
                                     <button class="btn btn-sm btn-outline-primary mx-1" onclick="openEditModal({{ $course->id }})">Sửa</button>
                                     <button class="btn btn-sm btn-outline-danger" onclick="deleteCourse({{ $course->id }})">Xóa</button>

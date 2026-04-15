@@ -13,6 +13,7 @@ class Course extends Model
     protected $fillable = [
         'name',
         'duration_months',
-        'weekly_price'
+        'weekly_price',
+        'description'
     ];
 }

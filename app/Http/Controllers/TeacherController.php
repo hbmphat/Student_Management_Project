@@ -35,6 +35,8 @@ class TeacherController extends Controller
         $request->validate([
             'teacher_code' => 'required|string|max:50|unique:teachers,teacher_code',
             'name'         => 'required|string|max:255',
+            'gender'       => 'required|in:male,female,other',
+            'date_of_birth' => 'required|date',
             'phone'        => 'required|string|max:20|unique:teachers,phone',
             'email'        => 'nullable|email|unique:teachers,email',
             'status'       => 'required|in:available,teaching,inactive'
@@ -42,6 +44,8 @@ class TeacherController extends Controller
             'teacher_code.required' => 'Vui lòng nhập Mã giảng viên.',
             'teacher_code.unique'   => 'Mã giảng viên này đã tồn tại.',
             'name.required'         => 'Vui lòng nhập Tên giảng viên.',
+            'gender.required'       => 'Vui lòng chọn Giới tính.',
+            'date_of_birth.required' => 'Vui lòng nhập Ngày sinh.',
             'phone.required'        => 'Vui lòng nhập Số điện thoại.',
             'phone.unique'          => 'Số điện thoại này đã được sử dụng.',
             'email.email'           => 'Định dạng email không hợp lệ.',
@@ -80,6 +84,8 @@ class TeacherController extends Controller
         $request->validate([
             'teacher_code' => 'required|string|max:50|unique:teachers,teacher_code,' . $teacher->id,
             'name'         => 'required|string|max:255',
+            'gender'       => 'required|in:male,female,other',
+            'date_of_birth' => 'required|date',
             'phone'        => 'required|string|max:20|unique:teachers,phone,' . $teacher->id,
             'email'        => 'nullable|email|unique:teachers,email,' . $teacher->id,
             'status'       => 'required|in:available,teaching,inactive'
@@ -87,6 +93,8 @@ class TeacherController extends Controller
             'teacher_code.required' => 'Vui lòng nhập Mã giảng viên.',
             'teacher_code.unique'   => 'Mã giảng viên này đã bị trùng.',
             'name.required'         => 'Vui lòng nhập Tên giảng viên.',
+            'gender.required'       => 'Vui lòng chọn Giới tính.',
+            'date_of_birth.required' => 'Vui lòng nhập Ngày sinh.',
             'phone.required'        => 'Vui lòng nhập Số điện thoại.',
             'phone.unique'          => 'Số điện thoại này đã bị trùng.',
             'email.email'           => 'Định dạng email không hợp lệ.',

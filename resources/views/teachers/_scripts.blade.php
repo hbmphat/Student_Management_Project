@@ -27,6 +27,8 @@
             $('#teacher_id').val(data.id);
             $('#teacher_code').val(data.teacher_code);
             $('#name').val(data.name);
+            $('#gender').val(data.gender);
+            $('#date_of_birth').val(data.date_of_birth);
             $('#phone').val(data.phone);
             $('#email').val(data.email);
             $('#status').val(data.status);
@@ -48,6 +50,8 @@
         let data = {
             teacher_code: $('#teacher_code').val(),
             name: $('#name').val(),
+            gender: $('#gender').val(),
+            date_of_birth: $('#date_of_birth').val(),
             phone: $('#phone').val(),
             email: $('#email').val(),
             status: $('#status').val(),

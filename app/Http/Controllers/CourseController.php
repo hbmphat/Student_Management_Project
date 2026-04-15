@@ -35,11 +35,14 @@ class CourseController extends Controller
             'name' => 'required|string|max:255|unique:courses,name',
             'duration_months' => 'required|integer|min:1',
             'weekly_price' => 'required|numeric|min:0',
+            'description' => 'nullable|string'
         ], [
             'name.required' => 'Vui lòng nhập tên khóa học.',
             'name.unique' => 'Tên khóa học đã tồn tại.',
             'duration_months.required' => 'Vui lòng nhập số tháng.',
-            'weekly_price.required' => 'Vui lòng nhập giá mỗi tuần.'
+            'weekly_price.required' => 'Vui lòng nhập giá mỗi tuần.',
+            'description.string' => 'Mô tả phải là một chuỗi ký tự.'
+
         ]);
 
         Course::create($request->all());
@@ -74,9 +77,13 @@ class CourseController extends Controller
             'name' => 'required|string|max:255|unique:courses,name,' . $course->id,
             'duration_months' => 'required|integer|min:1',
             'weekly_price' => 'required|numeric|min:0',
+            'description' => 'nullable|string'
         ], [
             'name.required' => 'Vui lòng nhập tên khóa học.',
-            'name.unique' => 'Tên khóa học đã bị trùng.'
+            'name.unique' => 'Tên khóa học đã bị trùng.',
+            'duration_months.required' => 'Vui lòng nhập số tháng.',
+            'weekly_price.required' => 'Vui lòng nhập giá mỗi tuần.',
+            'description.string' => 'Mô tả phải là một chuỗi ký tự.'
         ]);
 
         $course->update($request->all());

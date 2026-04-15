@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('teacher_code')->unique(); 
             $table->string('name');
+            $table->string('gender', 10);
+            $table->date('date_of_birth');
             $table->string('phone', 20);
             $table->string('email')->nullable();
             $table->text('qualifications')->nullable(); 

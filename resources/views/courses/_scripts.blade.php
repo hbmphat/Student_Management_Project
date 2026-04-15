@@ -31,7 +31,7 @@
             $('#name').val(data.name);
             $('#duration_months').val(data.duration_months);
             $('#weekly_price').val(parseFloat(data.weekly_price));
-            
+            $('#description').val(data.description);
             $('#modalTitle').text('Sửa Khóa Học');
             $('#courseModal').modal('show');
         });
@@ -48,6 +48,7 @@
             name: $('#name').val(),
             duration_months: $('#duration_months').val(),
             weekly_price: $('#weekly_price').val(),
+            description: $('#description').val()
         };
 
         $('#btnSave').prop('disabled', true).text('Đang lưu...');

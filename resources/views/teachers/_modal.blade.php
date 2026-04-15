@@ -25,6 +25,20 @@
                                     placeholder="VD: H.Phát">
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Giới tính <span class="text-danger">*</span></label>
+                                <select class="form-select" id="gender" name="gender" required>
+                                    <option value="male">Nam</option>
+                                    <option value="female">Nữ</option>
+                                    <option value="other">Khác</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Ngày sinh <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" required>
+                            </div>
+                        </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
