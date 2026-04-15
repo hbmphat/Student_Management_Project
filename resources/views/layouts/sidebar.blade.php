@@ -19,10 +19,10 @@
     </div>
 
     <nav class="nav-menu d-flex flex-column">
-        {{-- <a class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
+        <a class="nav-item" href="#">
             <span class="material-symbols-outlined">dashboard</span>
             <p class="m-0">Trang Chủ</p>
-        </a> --}}
+        </a>
         
         <a class="nav-item" href="#">
             <span class="material-symbols-outlined">group</span>
