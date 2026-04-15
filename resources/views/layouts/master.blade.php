@@ -13,8 +13,10 @@
 </head>
 
 <body>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
     @include('layouts.sidebar')
-    {{-- @include('layouts.header') --}}
+    @include('layouts.header')
 
     <div class="main-content" style="margin-left: 250px; margin-top: 60px; padding: 30px;">
         @yield('content')
@@ -36,6 +38,17 @@
                 arrow.text('expand_more');
             }
         }
+        $(document).ready(function() {
+            $('#btn-toggle-sidebar').click(function() {
+                $('.sidebar').toggleClass('show');
+                $('#sidebarOverlay').toggleClass('active');
+            });
+
+            $('#sidebarOverlay').click(function() {
+                $('.sidebar').removeClass('show');
+                $(this).removeClass('active');
+            });
+        });
     </script>
     @endpush
 
