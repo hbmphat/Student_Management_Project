@@ -6,9 +6,14 @@
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="m-0 text-primary fw-bold">Danh sách Giảng viên</h2>
+        <div>
         <button class="btn btn-success" onclick="openAddModal()">
             <i class="fas fa-plus"></i> Thêm Giảng viên mới
         </button>
+        <a href="{{ route('teachers.export-pdf') }}" class="btn btn-danger" target="_blank">
+            <i class="fas fa-file-pdf"></i> Xuất danh sách Giảng viên
+        </a>
+        </div>
     </div>
 
     <div class="card border-0 shadow-sm">

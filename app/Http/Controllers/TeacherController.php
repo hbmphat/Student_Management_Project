@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Teacher;
 use Illuminate\Container\Attributes\Tag;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class TeacherController extends Controller
 {
@@ -114,5 +115,20 @@ class TeacherController extends Controller
         //
         $teacher->delete();
         return response()->json(['success' => 'Xóa giảng viên thành công!']);
+    }
+
+    public function exportPdf()
+    {
+        $teachers = Teacher::all();
+
+        $data=[
+            'center_name' => 'ENGBREAK ENGLISH CENTER',
+            'slogan' => 'Danh sách giảng viên của trung tâm',
+            'teachers' => $teachers,
+            'date' => date('d/m/Y')
+        ];
+        $pdf = Pdf::loadView('teachers.pdf_teacherList', $data);
+        $pdf->setPaper('A4', 'portrait');
+        return $pdf->stream('DanhSachGiangVien_' . date('Y-m-d') . '.pdf');
     }
 }

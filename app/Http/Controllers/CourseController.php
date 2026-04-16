@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class CourseController extends Controller
 {
@@ -99,5 +100,22 @@ class CourseController extends Controller
         //
         $course->delete();
         return response()->json(['success' => 'Xóa khóa học thành công!']);
+    }
+    public function exportPdf()
+    {
+        $courses = Course::all();
+
+        $data = [
+            'center_name' => 'ENGBREAK ENGLISH CENTER',
+            'slogan' => 'Bứt phá giới hạn ngôn ngữ của bạn!',
+            'hotline' => '1900 8888',
+            'address' => 'Tòa nhà EngBreak, Quận 1, TP.HCM',
+            'courses' => $courses,
+            'date' => date('d/m/Y')
+        ];
+
+        $pdf = Pdf::loadView('courses.pdf_brochure', $data);
+        $pdf->setPaper('a4', 'portrait');
+        return $pdf->stream('EngBreak_BaoGiaKhoaHoc_' . date('dmY') . '.pdf');
     }
 }
