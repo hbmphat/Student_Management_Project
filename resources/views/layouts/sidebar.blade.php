@@ -29,7 +29,7 @@
             <p class="m-0">Quản lý Học viên</p>
         </a>
 
-        <a class="nav-item" href="#">
+        <a class="nav-item {{ request()->routeIs('class-rooms.*') ? 'active' : '' }}" href="{{ route('class-rooms.index') }}">
             <span class="material-symbols-outlined">desk</span>
             <p class="m-0">Quản lý Lớp học</p>
         </a>
