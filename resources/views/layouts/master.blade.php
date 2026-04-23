@@ -29,6 +29,34 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @push('scripts')
     <script>
+        window.showToast = function(message, icon = 'success', title = 'Thông báo', options = {}) {
+            return Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: icon,
+                title: title,
+                text: message,
+                showConfirmButton: false,
+                timer: 2500,
+                timerProgressBar: true,
+                ...options,
+            });
+        };
+
+        window.showConfirmDialog = function(options = {}) {
+            return Swal.fire({
+                title: 'Xác nhận',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Xác nhận',
+                cancelButtonText: 'Hủy',
+                reverseButtons: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                ...options,
+            });
+        };
+
         function toggleSettings() {
             $('#submenu-settings').slideToggle(200);
             let arrow = $('#settings-arrow');
@@ -49,6 +77,14 @@
                 $(this).removeClass('active');
             });
         });
+
+        @if (session('success'))
+            showToast(@json(session('success')), 'success', 'Thành công');
+        @endif
+
+        @if (session('error'))
+            showToast(@json(session('error')), 'error', 'Thất bại');
+        @endif
     </script>
     @endpush
 

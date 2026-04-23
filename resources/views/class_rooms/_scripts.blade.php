@@ -16,13 +16,13 @@
                 data: $(this).serialize(),
                 success: function(response) {
                     $('#addClassModal').modal('hide');
-                    Swal.fire('Thành công!', response.message, 'success').then(() => {
+                    showToast(response.message, 'success', 'Thành công').then(() => {
                         location.reload();
                     });
                 },
                 error: function(xhr) {
                     btn.prop('disabled', false).text('Lưu & Tạo Lớp');
-                    Swal.fire('Lỗi!', 'Vui lòng điền đầy đủ thông tin.', 'error');
+                    showToast('Vui lòng điền đầy đủ thông tin.', 'error', 'Thất bại');
                 }
             });
         });
@@ -47,7 +47,8 @@
                     $('#edit-teacher-id').val(classroom.teacher_id);
                     $('#edit-shift-id').val(classroom.shift_id);
                     $('#edit-room').val(classroom.room);
-                    $('#detail-time').text(classroom.formatted_start_date + ' đến ' + classroom.formatted_end_date);
+                    $('#detail-time').text(classroom.formatted_start_date + ' đến ' + classroom
+                        .formatted_end_date);
                     $('#edit-start-date').val(classroom.input_start_date);
                     $('#edit-end-date').val(classroom.input_end_date);
                     $('#edit-status').val(classroom.status);
@@ -56,13 +57,10 @@
                             $(`#edit_day_${item.day_of_week}`).prop('checked', true);
                         });
                     }
-                    $('#detail-student-count').text(0);
-                    $('#student-list-body').html(
-                        '<tr><td colspan="4" class="text-center text-muted">Chưa có dữ liệu học viên.</td></tr>'
-                    );
+                    loadClassStudents(id);
                 },
                 error: function() {
-                    Swal.fire('Lỗi!', 'Không thể lấy thông tin lớp học.', 'error');
+                    showToast('Không thể lấy thông tin lớp học.', 'error', 'Thất bại');
                 }
             });
         }
@@ -71,13 +69,11 @@
         $('#form-update-class').submit(function(e) {
             e.preventDefault();
 
-            Swal.fire({
+            showConfirmDialog({
                 title: 'Xác nhận cập nhật?',
-                text: "Hệ thống sẽ tính toán lại toàn bộ lịch học sắp tới của lớp này!",
+                text: 'Hệ thống sẽ tính toán lại toàn bộ lịch học sắp tới của lớp này!',
                 icon: 'question',
-                showCancelButton: true,
-                confirmButtonText: 'Đồng ý',
-                cancelButtonText: 'Hủy'
+                confirmButtonText: 'Cập nhật'
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
@@ -85,28 +81,23 @@
                         type: 'POST',
                         data: $(this).serialize(),
                         success: function(res) {
-                            Swal.fire('Thành công!', res.message, 'success').then(() => {
+                            showToast(res.message, 'success', 'Thành công').then(() => {
                                 location.reload();
                             });
                         },
                         error: function(xhr) {
-                            Swal.fire('Lỗi!', 'Vui lòng kiểm tra lại dữ liệu nhập vào.',
-                                'error');
+                            showToast('Vui lòng kiểm tra lại dữ liệu nhập vào.', 'error', 'Thất bại');
                         }
                     });
                 }
             });
         });
+
         function deleteClass() {
-            Swal.fire({
+            showConfirmDialog({
                 title: 'Xóa lớp học này?',
-                text: "Lớp sẽ bị đưa vào thùng rác!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Xóa ngay',
-                cancelButtonText: 'Hủy'
+                text: 'Lớp sẽ bị đưa vào thùng rác!',
+                confirmButtonText: 'Xóa ngay'
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
@@ -116,7 +107,7 @@
                             _token: '{{ csrf_token() }}'
                         },
                         success: function(res) {
-                            Swal.fire('Đã xóa!', res.message, 'success').then(() => {
+                            showToast(res.message, 'success', 'Đã xóa').then(() => {
                                 location.reload();
                             });
                         }
@@ -155,34 +146,20 @@
                     $('#form-add-shift')[0].reset();
                     btn.prop('disabled', false).text('Thêm Ca');
 
-                    Swal.fire({
-                        toast: true,
-                        position: 'top-end',
-                        showConfirmButton: false,
-                        timer: 3000,
-                        icon: 'success',
-                        title: 'Đã thêm ca học thành công!'
-                    });
+                    showToast('Đã thêm ca học thành công!', 'success', 'Thành công');
                 },
                 error: function(xhr) {
                     btn.prop('disabled', false).text('Thêm Ca');
-                    Swal.fire('Lỗi',
-                        'Vui lòng kiểm tra lại thông tin (Giờ kết thúc phải lớn hơn giờ bắt đầu).',
-                        'error');
+                    showToast('Vui lòng kiểm tra lại thông tin (Giờ kết thúc phải lớn hơn giờ bắt đầu).', 'error', 'Thất bại');
                 }
             });
         });
 
         function deleteShift(id) {
-            Swal.fire({
+            showConfirmDialog({
                 title: 'Xóa ca học này?',
-                text: "Nếu ca này đang có lớp học, bạn sẽ không thể xóa!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Xóa ngay!',
-                cancelButtonText: 'Hủy'
+                text: 'Nếu ca này đang có lớp học, bạn sẽ không thể xóa!',
+                confirmButtonText: 'Xóa ngay'
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
@@ -191,10 +168,106 @@
                         success: function(res) {
                             $(`#shift-row-${id}`).fadeOut();
                             $(`select[name="shift_id"] option[value="${id}"]`).remove();
-                            Swal.fire('Đã xóa!', res.message, 'success');
+                            showToast(res.message, 'success', 'Đã xóa');
                         },
                         error: function(xhr) {
-                            Swal.fire('Lỗi!', xhr.responseJSON.message, 'error');
+                            showToast(xhr.responseJSON.message, 'error', 'Thất bại');
+                        }
+                    });
+                }
+            });
+        }
+        // hàm load danh sách học viên của lớp
+        function loadClassStudents(classId) {
+            $.get(`/class-rooms/${classId}/students`, function(res) {
+                let html = '';
+                $('#detail-student-count').text(res.students.length);
+
+                if (res.students.length === 0) {
+                    html = '<tr><td colspan="4" class="text-center text-muted">Chưa có học viên.</td></tr>';
+                } else {
+                    res.students.forEach((s, index) => {
+                        html += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td><b>${s.uuid}</b> - ${s.name}</td>
+                    <td><span class="badge bg-success small">Đang học</span></td>
+                    <td>
+                        <button type="button" class="btn btn-sm text-danger" onclick="removeStudentFromClass(${s.id})">
+                            <i class="fas fa-times">Xoá</i>
+                        </button>
+                    </td>
+                </tr>`;
+                    });
+                }
+                $('#student-list-body').html(html);
+            });
+        }
+
+        // xử lý tìm kiếm học viên để thêm
+        $('#search-student-to-add').on('keyup', function() {
+            let q = $(this).val();
+            if (q.length < 2) {
+                $('#search-results').addClass('d-none');
+                return;
+            }
+
+            $.get(`/class-rooms/${currentClassId}/search-students`, {
+                q: q
+            }, function(data) {
+                let html = '';
+                data.forEach(s => {
+                    html += `<a href="javascript:void(0)" class="list-group-item list-group-item-action small" onclick="addStudentToClass(${s.id})">
+                <i class="fas fa-plus-circle text-success me-2"></i> ${s.uuid} - ${s.name}
+            </a>`;
+                });
+                $('#search-results').html(html).removeClass('d-none');
+            });
+        });
+
+        // Hàm thêm học viên
+        function addStudentToClass(studentId) {
+            $.post(`/class-rooms/${currentClassId}/add-student`, {
+                _token: '{{ csrf_token() }}',
+                student_id: studentId
+            }, function(res) {
+                // 1. Ẩn kết quả tìm kiếm và xóa ô nhập
+                $('#search-results').addClass('d-none');
+                $('#search-student-to-add').val('');
+
+                // 2. Hiện thông báo nhỏ góc màn hình (Toast)
+                showToast('Đã thêm học viên vào lớp!', 'success', 'Thành công');
+
+                // 3. Tải lại danh sách học viên
+                loadClassStudents(currentClassId);
+            }).fail(function() {
+                showToast('Không thể thêm học viên này!', 'error', 'Thất bại');
+            });
+        }
+
+        // hàm xóa học viên khỏi lớp
+        function removeStudentFromClass(studentId) {
+            showConfirmDialog({
+                title: 'Xóa học viên khỏi lớp?',
+                text: 'Học viên này sẽ bị gỡ khỏi danh sách lớp hiện tại!',
+                confirmButtonText: 'Xóa ngay'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: `/class-rooms/${currentClassId}/students/${studentId}`,
+                        type: 'DELETE',
+                        data: {
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function(res) {
+                            // Hiện thông báo nhỏ góc màn hình (Toast)
+                            showToast(res.message || 'Đã xóa học viên khỏi lớp!', 'success', 'Đã xóa');
+
+                            // Tải lại danh sách học viên
+                            loadClassStudents(currentClassId);
+                        },
+                        error: function(xhr) {
+                            showToast('Không thể xóa học viên này.', 'error', 'Thất bại');
                         }
                     });
                 }

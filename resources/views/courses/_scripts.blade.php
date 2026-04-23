@@ -59,14 +59,8 @@
             data: data,
             success: function(response) {
                 $('#courseModal').modal('hide');
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Thành công!',
-                    text: response.success,
-                    timer: 1500,
-                    showConfirmButton: false
-                }).then(() => {
-                    location.reload(); 
+                showToast(response.success, 'success', 'Thành công').then(() => {
+                    location.reload();
                 });
             },
             error: function(xhr) {
@@ -77,28 +71,24 @@
                     errorHtml += `<li>${value[0]}</li>`;
                 });
                 $('#errorList').removeClass('d-none').html(errorHtml);
+                showToast('Vui lòng kiểm tra lại dữ liệu nhập vào.', 'error', 'Thất bại');
             }
         });
     });
 
     // Xóa khóa học
     function deleteCourse(id) {
-        Swal.fire({
-            title: 'Bạn có chắc chắn?',
-            text: "Khoá học sẽ được chuyển vào thùng rác!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Đồng ý xóa',
-            cancelButtonText: 'Hủy'
+        showConfirmDialog({
+            title: 'Xóa khóa học này?',
+            text: 'Khóa học sẽ được chuyển vào thùng rác!',
+            confirmButtonText: 'Xóa ngay'
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
                     url: `/courses/${id}`,
                     type: 'DELETE',
                     success: function(response) {
-                        Swal.fire('Đã xóa!', response.success, 'success');
+                        showToast(response.success, 'success', 'Đã xóa');
                         $(`#row-${id}`).fadeOut(500, function() { $(this).remove(); });
                     }
                 });

@@ -66,13 +66,7 @@
             data: data,
             success: function(response) {
                 $('#teacherModal').modal('hide');
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Thành công!',
-                    text: response.success,
-                    timer: 1500,
-                    showConfirmButton: false
-                }).then(() => {
+                showToast(response.success, 'success', 'Thành công').then(() => {
                     location.reload();
                 });
             },
@@ -84,27 +78,23 @@
                     errorHtml += `<li>${value[0]}</li>`;
                 });
                 $('#errorList').removeClass('d-none').html(errorHtml);
+                showToast('Vui lòng kiểm tra lại dữ liệu nhập vào.', 'error', 'Thất bại');
             }
         });
     });
 
     function deleteTeacher(id) {
-        Swal.fire({
-            title: 'Bạn có chắc chắn?',
-            text: "Hồ sơ giảng viên sẽ được chuyển vào thùng rác!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Đồng ý xóa',
-            cancelButtonText: 'Hủy'
+        showConfirmDialog({
+            title: 'Xóa hồ sơ giảng viên?',
+            text: 'Hồ sơ giảng viên sẽ được chuyển vào thùng rác!',
+            confirmButtonText: 'Xóa ngay'
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
                     url: `/teachers/${id}`,
                     type: 'DELETE',
                     success: function(response) {
-                        Swal.fire('Đã xóa!', response.success, 'success');
+                        showToast(response.success, 'success', 'Đã xóa');
                         $(`#row-${id}`).fadeOut(500, function() { $(this).remove(); });
                     }
                 });

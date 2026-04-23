@@ -55,7 +55,7 @@
                                     <td class="text-end">
                                         <button class="btn btn-sm btn-outline-danger"
                                             onclick="deleteShift({{ $shift->id }})">
-                                            <i class="fas fa-trash"></i>Xoá
+                                            <i class="fas fa-trash">Xoá</i>
                                         </button>
                                     </td>
                                 </tr>

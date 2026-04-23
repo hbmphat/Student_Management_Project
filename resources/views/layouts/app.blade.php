@@ -15,6 +15,7 @@
 
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <div id="app">
@@ -76,5 +77,45 @@
             @yield('content')
         </main>
     </div>
+
+    <script>
+        window.showToast = function(message, icon = 'success', title = 'Thông báo', options = {}) {
+            return Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: icon,
+                title: title,
+                text: message,
+                showConfirmButton: false,
+                timer: 2500,
+                timerProgressBar: true,
+                ...options,
+            });
+        };
+
+        @if (session('status'))
+            document.addEventListener('DOMContentLoaded', function() {
+                showToast(@json(session('status')), 'success', 'Thành công');
+            });
+        @endif
+
+        @if (session('success'))
+            document.addEventListener('DOMContentLoaded', function() {
+                showToast(@json(session('success')), 'success', 'Thành công');
+            });
+        @endif
+
+        @if (session('error'))
+            document.addEventListener('DOMContentLoaded', function() {
+                showToast(@json(session('error')), 'error', 'Thất bại');
+            });
+        @endif
+
+        @if (session('resent'))
+            document.addEventListener('DOMContentLoaded', function() {
+                showToast(@json(__('A fresh verification link has been sent to your email address.')), 'success', 'Thành công');
+            });
+        @endif
+    </script>
 </body>
 </html>

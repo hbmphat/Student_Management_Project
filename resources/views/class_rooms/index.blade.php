@@ -47,7 +47,7 @@
                                     <td>
                                         <div class="fw-bold">{{ $class->teacher->name ?? 'N/A' }}</div>
                                     </td>
-                                    <td class="text-center"><span class="badge bg-secondary rounded-pill">0</span></td>
+                                    <td class="text-center"><span class="badge bg-secondary rounded-pill">{{ $class->students->count() }}</span></td>
                                     <td class="text-center">
                                         @if ($class->status == 'active')
                                             <span class="badge bg-success">Đang học</span>

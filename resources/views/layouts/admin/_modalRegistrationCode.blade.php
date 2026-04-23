@@ -56,13 +56,9 @@
                 $('#adminCodeModal').modal('hide');
                 btn.prop('disabled', false).text('Xác nhận & Tạo mã');
                 
-                // Hiển thị mã thành công bà Tân Vlog
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Cấp mã thành công!',
+                showToast('', 'success', 'Cấp mã thành công!', {
                     html: `Gửi mã này cho nhân viên để đăng ký:<br><br><b class="fs-1 text-danger" style="letter-spacing: 2px;">${response.code}</b>`,
-                    confirmButtonColor: '#0b3d91',
-                    confirmButtonText: 'Đã copy'
+                    timer: 10000,
                 }).then(() => {
                     // Nếu đang đứng ở trang Lịch sử thì reload lại bảng
                     if(window.location.pathname === '/registration-codes') {
@@ -77,7 +73,7 @@
                     $('#admin_confirm_password').addClass('is-invalid');
                     $('#admin_password_error').text(xhr.responseJSON.errors.password[0]);
                 } else {
-                    Swal.fire('Lỗi!', 'Hệ thống đang bận, vui lòng thử lại.', 'error');
+                    showToast('Hệ thống đang bận, vui lòng thử lại.', 'error', 'Thất bại');
                 }
             }
         });

@@ -11,6 +11,7 @@ use App\Models\ClassSchedule;
 use App\Models\ClassSession;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use App\Models\Student;
 
 class ClassRoomController extends Controller
 {
@@ -26,9 +27,7 @@ class ClassRoomController extends Controller
         return view('class_rooms.index', compact('classRooms', 'courses', 'teachers', 'shifts'));
     }
 
-    public function create()
-    {
-    }
+    public function create() {}
 
     public function store(Request $request)
     {
@@ -39,7 +38,7 @@ class ClassRoomController extends Controller
             'shift_id' => 'required',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after:start_date',
-            'days_of_week' => 'required|array|min:1', 
+            'days_of_week' => 'required|array|min:1',
         ]);
 
         try {
@@ -139,9 +138,7 @@ class ClassRoomController extends Controller
         ]);
     }
 
-    public function edit(string $id)
-    {
-    }
+    public function edit(string $id) {}
 
     public function update(Request $request, string $id)
     {
@@ -175,7 +172,7 @@ class ClassRoomController extends Controller
                 if ($day == 8) {
                     $hasSunday = true;
                 } else {
-                    $dayNumbers[] = $day; 
+                    $dayNumbers[] = $day;
                 }
             }
 
@@ -252,7 +249,7 @@ class ClassRoomController extends Controller
     {
         // xoá mềm lớp học
         $class = ClassRoom::findOrFail($id);
-        $class->delete(); 
+        $class->delete();
 
         return response()->json(['message' => 'đã xoá lớp học vào thùng rác.']);
     }
@@ -290,5 +287,57 @@ class ClassRoomController extends Controller
                 'message' => 'không thể xoá vì ca này đang được xếp cho lớp học!'
             ], 422);
         }
+    }
+
+    // 1. lấy danh sách học viên hiện có của lớp
+    public function getStudents($id)
+    {
+        $class = ClassRoom::with('students')->findOrFail($id);
+        return response()->json([
+            'students' => $class->students
+        ]);
+    }
+
+    // 2. tìm kiếm học viên chưa có trong lớp để thêm vào
+    public function searchStudents(Request $request, $id)
+    {
+        $class = ClassRoom::findOrFail($id);
+        $q = $request->q;
+
+        // lấy ID các học viên đã có trong lớp hoặc đã trùng ca học này
+        $excludedIds = DB::table('class_student')
+            ->join('class_rooms', 'class_student.class_room_id', '=', 'class_rooms.id')
+            // luật: không thêm học viên đã có trong lớp này HOẶC đang học lớp khác cùng ca
+            ->where('class_rooms.shift_id', $class->shift_id)
+            ->pluck('student_id');
+
+        $students = Student::whereNotIn('id', $excludedIds)
+            ->where(function ($query) use ($q) {
+                $query->where('name', 'LIKE', "%{$q}%")
+                    ->orWhere('uuid', 'LIKE', "%{$q}%");
+            })
+            ->limit(10)
+            ->get();
+
+        return response()->json($students);
+    }
+
+    // 3. thêm học viên vào lớp
+    public function addStudent(Request $request, $id)
+    {
+        $class = ClassRoom::findOrFail($id);
+        // đính kèm học viên vào bảng trung gian
+        $class->students()->attach($request->student_id, ['status' => 'studying']);
+
+        return response()->json(['message' => 'đã thêm học viên vào lớp!']);
+    }
+
+    // 4. xóa học viên khỏi lớp
+    public function removeStudent($classId, $studentId)
+    {
+        $class = ClassRoom::findOrFail($classId);
+        $class->students()->detach($studentId);
+
+        return response()->json(['message' => 'đã xóa học viên khỏi lớp.']);
     }
 }

@@ -97,27 +97,31 @@
                         </div>
 
                         <div class="col-md-7 p-4">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h6 class="fw-bold text-success m-0">DANH SÁCH HỌC VIÊN (<span
-                                        id="detail-student-count">0</span>)</h6>
-                                <button type="button" class="btn btn-sm btn-secondary" disabled><i
-                                        class="fas fa-user-plus"></i> Thêm Học viên</button>
+                            <div class="mb-3">
+                                <h6 class="fw-bold text-success mb-2">THÊM HỌC VIÊN VÀO LỚP</h6>
+                                <div class="input-group input-group-sm">
+                                    <input type="text" id="search-student-to-add" class="form-control"
+                                        placeholder="Nhập tên hoặc mã HV để tìm...">
+                                    <button class="btn btn-success" type="button" id="btn-search-add"><i
+                                            class="fas fa-search"></i> Tìm</button>
+                                </div>
+                                <div id="search-results" class="list-group mt-2 shadow-sm d-none"
+                                    style="position: absolute; z-index: 1000; width: 55%;"></div>
                             </div>
-                            <div class="table-responsive" style="max-height: 500px;">
-                                <table class="table table-bordered align-middle shadow-sm">
+
+                            <h6 class="fw-bold text-dark mb-3">DANH SÁCH HỌC VIÊN TRONG LỚP (<span
+                                    id="detail-student-count">0</span>)</h6>
+                            <div class="table-responsive" style="max-height: 400px;">
+                                <table class="table table-sm table-bordered align-middle">
                                     <thead class="table-light">
                                         <tr>
-                                            <th>STT</th>
-                                            <th>Tên Học viên</th>
+                                            <th width="50">STT</th>
+                                            <th>Học viên</th>
                                             <th>Trạng thái</th>
-                                            <th>Thao tác</th>
+                                            <th width="50"></th>
                                         </tr>
                                     </thead>
                                     <tbody id="student-list-body">
-                                        <tr>
-                                            <td colspan="4" class="text-center text-muted">Chưa có dữ liệu học
-                                                viên...</td>
-                                        </tr>
                                     </tbody>
                                 </table>
                             </div>

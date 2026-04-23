@@ -22,4 +22,28 @@ Route::middleware('auth')->group(function () {
     Route::get('/api/students-search', [App\Http\Controllers\ClassRoomController::class, 'searchStudents']);
 
     Route::resource('class-rooms', App\Http\Controllers\ClassRoomController::class);
+
+    // Route API tìm kiếm realtime cho DataTable
+    Route::get('/api/students-search', [App\Http\Controllers\StudentController::class, 'search'])->name('students.search');
+
+    // Nút In Thẻ PDF
+    Route::get('/students/{id}/print-card', [App\Http\Controllers\StudentCardController::class, 'generateCard'])->name('students.print-card');
+
+    // Quản lý học viên chuẩn CRUD
+    Route::resource('students', App\Http\Controllers\StudentController::class);
+
+    // API lấy danh sách Quận/Huyện và Phường/Xã
+    Route::get('/api/provinces/{id}/districts', function ($id) {
+        return response()->json(App\Models\District::where('province_id', $id)->orderBy('name')->get());
+    });
+
+    Route::get('/api/districts/{id}/wards', function ($id) {
+        return response()->json(App\Models\Ward::where('district_id', $id)->orderBy('name')->get());
+    });
+
+    // Cụm Route API xử lý Học viên trong Lớp học
+    Route::get('/class-rooms/{id}/students', [App\Http\Controllers\ClassRoomController::class, 'getStudents']);
+    Route::get('/class-rooms/{id}/search-students', [App\Http\Controllers\ClassRoomController::class, 'searchStudents']);
+    Route::post('/class-rooms/{id}/add-student', [App\Http\Controllers\ClassRoomController::class, 'addStudent']);
+    Route::delete('/class-rooms/{classId}/students/{studentId}', [App\Http\Controllers\ClassRoomController::class, 'removeStudent']);
 });

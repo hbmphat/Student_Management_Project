@@ -24,7 +24,7 @@
             <p class="m-0">Trang Chủ</p>
         </a>
         
-        <a class="nav-item" href="#">
+        <a class="nav-item {{ request()->routeIs('students.*') ? 'active' : '' }}" href="{{ route('students.index') }}">
             <span class="material-symbols-outlined">group</span>
             <p class="m-0">Quản lý Học viên</p>
         </a>
