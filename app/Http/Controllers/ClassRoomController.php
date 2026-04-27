@@ -71,7 +71,8 @@ class ClassRoomController extends Controller
 
             // tạo tên lớp chuẩn
             $codeTeacher = $teacher->teacher_code;
-            $newClassName = "{$course->name}-{$codeTeacher}-{$shift->name}({$daysString} {$timeString})";
+            $newClassName = "{$course->name}-{$codeTeacher}-{$shift->name}";
+            // ({$daysString} {$timeString})";
 
             // lưu thông tin lớp
             $classRoom = ClassRoom::create([
@@ -184,7 +185,8 @@ class ClassRoomController extends Controller
 
             // tạo tên lớp chuẩn
             $codeTeacher = $teacher->teacher_code;
-            $newClassName = "{$course->name}-{$codeTeacher}-{$shift->name}({$daysString} {$timeString})";
+            $newClassName = "{$course->name}-{$codeTeacher}-{$shift->name}";
+            //({$daysString} {$timeString})";
 
             // cập nhật thông tin lớp
             $classRoom->update([
