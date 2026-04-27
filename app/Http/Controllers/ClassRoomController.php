@@ -112,11 +112,11 @@ class ClassRoomController extends Controller
             // xác nhận lưu
             DB::commit();
 
-            return response()->json(['message' => "tạo thành công lớp: {$newClassName}"]);
+            return response()->json(['message' => "Tạo thành công lớp: {$newClassName}"]);
         } catch (\Exception $e) {
             // hoàn tác nếu có lỗi
             DB::rollBack();
-            return response()->json(['message' => 'lỗi hệ thống: ' . $e->getMessage()], 500);
+            return response()->json(['message' => 'Lỗi hệ thống: ' . $e->getMessage()], 500);
         }
     }
 
@@ -237,11 +237,11 @@ class ClassRoomController extends Controller
 
             // xác nhận lưu
             DB::commit();
-            return response()->json(['message' => 'cập nhật lớp và lịch học thành công!']);
+            return response()->json(['message' => 'Cập nhật lớp và lịch học thành công!']);
         } catch (\Exception $e) {
             // hoàn tác nếu lỗi
             DB::rollBack();
-            return response()->json(['message' => 'lỗi: ' . $e->getMessage()], 500);
+            return response()->json(['message' => 'Lỗi: ' . $e->getMessage()], 500);
         }
     }
 
@@ -251,7 +251,7 @@ class ClassRoomController extends Controller
         $class = ClassRoom::findOrFail($id);
         $class->delete();
 
-        return response()->json(['message' => 'đã xoá lớp học vào thùng rác.']);
+        return response()->json(['message' => 'Đã xoá lớp học vào thùng rác.']);
     }
 
     public function storeShift(Request $request)
@@ -268,7 +268,7 @@ class ClassRoomController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'thêm ca học thành công!',
+            'message' => 'Thêm ca học thành công!',
             'shift' => $shift,
             'formatted_time' => Carbon::parse($shift->start_time)->format('H:i') . ' - ' . Carbon::parse($shift->end_time)->format('H:i')
         ]);
@@ -279,12 +279,12 @@ class ClassRoomController extends Controller
         try {
             // xoá ca học
             Shift::findOrFail($id)->delete();
-            return response()->json(['success' => true, 'message' => 'đã xoá ca học.']);
+            return response()->json(['success' => true, 'message' => 'Đã xoá ca học.']);
         } catch (\Illuminate\Database\QueryException $e) {
             // chặn xoá nếu ca đang được sử dụng
             return response()->json([
                 'success' => false,
-                'message' => 'không thể xoá vì ca này đang được xếp cho lớp học!'
+                'message' => 'Không thể xoá vì ca này đang được xếp cho lớp học!'
             ], 422);
         }
     }
@@ -329,7 +329,7 @@ class ClassRoomController extends Controller
         // đính kèm học viên vào bảng trung gian
         $class->students()->attach($request->student_id, ['status' => 'studying']);
 
-        return response()->json(['message' => 'đã thêm học viên vào lớp!']);
+        return response()->json(['message' => 'Đã thêm học viên vào lớp!']);
     }
 
     // 4. xóa học viên khỏi lớp
@@ -338,6 +338,6 @@ class ClassRoomController extends Controller
         $class = ClassRoom::findOrFail($classId);
         $class->students()->detach($studentId);
 
-        return response()->json(['message' => 'đã xóa học viên khỏi lớp.']);
+        return response()->json(['message' => 'Đã xóa học viên khỏi lớp.']);
     }
 }

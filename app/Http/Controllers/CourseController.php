@@ -14,7 +14,7 @@ class CourseController extends Controller
     public function index()
     {
         //
-        $courses = Course::orderBy('created_at', 'desc')->get();
+        $courses = Course::orderBy('id', 'asc')->get();
         return view('courses.index', compact('courses'));
     }
 
@@ -106,10 +106,10 @@ class CourseController extends Controller
         $courses = Course::all();
 
         $data = [
-            'center_name' => 'ENGBREAK ENGLISH CENTER',
+            'center_name' => 'TRUNG TÂM NGOẠI NGỮ ENGBREAK',
             'slogan' => 'Bứt phá giới hạn ngôn ngữ của bạn!',
             'hotline' => '1900 8888',
-            'address' => 'Tòa nhà EngBreak, Quận 1, TP.HCM',
+            'address' => 'Tòa nhà EngBreak, 123 Đường ABC, Quận X, TP.HCM',
             'courses' => $courses,
             'date' => date('d/m/Y')
         ];

@@ -147,7 +147,7 @@
             </div>
         </div>
         <div class="footer">
-            Địa chỉ: 123 Đường ABC, Quận X, TP.HCM | SĐT: 0123.456.789
+            Tòa nhà EngBreak, 123 Đường ABC, Quận X, TP.HCM | SĐT: 1900 8888
         </div>
 
     </div>

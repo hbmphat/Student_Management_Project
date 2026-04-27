@@ -178,31 +178,42 @@
             });
         }
         // hàm load danh sách học viên của lớp
-        function loadClassStudents(classId) {
-            $.get(`/class-rooms/${classId}/students`, function(res) {
-                let html = '';
-                $('#detail-student-count').text(res.students.length);
+window.loadClassStudents = function(classId) {
+    $.get(`/class-rooms/${classId}/students`, function(res) {
+        let html = '';
+        $('#detail-student-count').text(res.students.length);
 
-                if (res.students.length === 0) {
-                    html = '<tr><td colspan="4" class="text-center text-muted">Chưa có học viên.</td></tr>';
-                } else {
-                    res.students.forEach((s, index) => {
-                        html += `
+        if (res.students.length === 0) {
+            html = '<tr><td colspan="4" class="text-center text-muted">Chưa có học viên.</td></tr>';
+        } else {
+            res.students.forEach((s, index) => {
+                // 1. Dịch trạng thái từ DB sang Tiếng Việt và chọn màu Badge
+                let statusBadge = '';
+                if (s.pivot.status === 'studying') {
+                    statusBadge = '<span class="badge bg-success small">Đang học</span>';
+                } else if (s.pivot.status === 'dropped') {
+                    statusBadge = '<span class="badge bg-danger small">Nghỉ học</span>';
+                } else if (s.pivot.status === 'reserved') {
+                    statusBadge = '<span class="badge bg-warning text-dark small">Bảo lưu</span>';
+                }
+
+                // 2. Render HTML
+                html += `
                 <tr>
                     <td>${index + 1}</td>
                     <td><b>${s.uuid}</b> - ${s.name}</td>
-                    <td><span class="badge bg-success small">Đang học</span></td>
+                    <td>${statusBadge}</td>
                     <td>
                         <button type="button" class="btn btn-sm text-danger" onclick="removeStudentFromClass(${s.id})">
-                            <i class="fas fa-times">Xoá</i>
+                            <i class="fas fa-times"> Xoá</i>
                         </button>
                     </td>
                 </tr>`;
-                    });
-                }
-                $('#student-list-body').html(html);
             });
         }
+        $('#student-list-body').html(html);
+    });
+}
 
         // xử lý tìm kiếm học viên để thêm
         $('#search-student-to-add').on('keyup', function() {

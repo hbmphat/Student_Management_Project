@@ -32,6 +32,22 @@ class Student extends Model
                 $student->uuid = 'HV' . str_pad($number, 6, '0', STR_PAD_LEFT);
             }
         });
+        // 2. TỰ ĐỘNG ĐỒNG BỘ TRẠNG THÁI VÀO BẢNG LỚP HỌC (Code mới thêm vào)
+        static::updated(function ($student) {
+            // Kiểm tra xem cột 'status' có thực sự bị thay đổi hay không
+            if ($student->wasChanged('status')) {
+                
+                // Cập nhật bảng trung gian (class_student)
+                // CHÚ Ý: Chỉ cập nhật những lớp chưa kết thúc (khác 'completed')
+                \Illuminate\Support\Facades\DB::table('class_student')
+                    ->where('student_id', $student->id)
+                    ->where('status', '!=', 'completed')
+                    ->update([
+                        'status' => $student->status,
+                        'updated_at' => now() // Cập nhật luôn thời gian sửa
+                    ]);
+            }
+        });
     }
 
     // 2. LOGIC HIỂN THỊ ẢNH THÔNG MINH (Accessor)

@@ -122,7 +122,7 @@ class TeacherController extends Controller
         $teachers = Teacher::all();
 
         $data=[
-            'center_name' => 'ENGBREAK ENGLISH CENTER',
+            'center_name' => 'TRUNG TÂM NGOẠI NGỮ ENGBREAK',
             'slogan' => 'Danh sách giảng viên của trung tâm',
             'teachers' => $teachers,
             'date' => date('d/m/Y')

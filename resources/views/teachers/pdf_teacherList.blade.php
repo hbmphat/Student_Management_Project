@@ -56,8 +56,6 @@
     @foreach($teachers as $teacher)
     <div class="course-box">
         <h3 class="course-title">📚 {{ $teacher->name }} (Mã GV: {{ $teacher->teacher_code }})</h3>
-        <p style="font-size: 13px; margin-bottom: 5px;"><i>Số điện thoại: {{ $teacher->phone }}</i></p>
-        <p style="font-size: 13px; margin-bottom: 5px;"><i>Email: {{ $teacher->email }}</i></p>
         
         <table class="pricing">
             <thead>
