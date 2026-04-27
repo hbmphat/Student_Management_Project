@@ -9,6 +9,26 @@
     });
     let isEdit = false;
 
+    function showBootstrapModal(selector) {
+        const element = document.querySelector(selector);
+
+        if (!element) {
+            return;
+        }
+
+        bootstrap.Modal.getOrCreateInstance(element).show();
+    }
+
+    function hideBootstrapModal(selector) {
+        const element = document.querySelector(selector);
+
+        if (!element) {
+            return;
+        }
+
+        bootstrap.Modal.getOrCreateInstance(element).hide();
+    }
+
     function openAddModal() {
         isEdit = false;
         $('#teacherForm')[0].reset();
@@ -16,7 +36,7 @@
         $('#status').val('available'); // Reset về mặc định
         $('#modalTitle').text('Thêm Giảng Viên Mới');
         $('#errorList').addClass('d-none').html('');
-        $('#teacherModal').modal('show');
+        showBootstrapModal('#teacherModal');
     }
 
     function openEditModal(id) {
@@ -35,7 +55,7 @@
             $('#qualifications').val(data.qualifications);
             
             $('#modalTitle').text('Sửa Hồ Sơ Giảng Viên');
-            $('#teacherModal').modal('show');
+            showBootstrapModal('#teacherModal');
         });
     }
 
@@ -65,7 +85,7 @@
             type: method,
             data: data,
             success: function(response) {
-                $('#teacherModal').modal('hide');
+                hideBootstrapModal('#teacherModal');
                 showToast(response.success, 'success', 'Thành công').then(() => {
                     location.reload();
                 });

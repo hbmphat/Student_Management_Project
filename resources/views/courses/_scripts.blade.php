@@ -11,6 +11,26 @@
 
     let isEdit = false;
 
+    function showBootstrapModal(selector) {
+        const element = document.querySelector(selector);
+
+        if (!element) {
+            return;
+        }
+
+        bootstrap.Modal.getOrCreateInstance(element).show();
+    }
+
+    function hideBootstrapModal(selector) {
+        const element = document.querySelector(selector);
+
+        if (!element) {
+            return;
+        }
+
+        bootstrap.Modal.getOrCreateInstance(element).hide();
+    }
+
     // Mở Modal Thêm
     function openAddModal() {
         isEdit = false;
@@ -18,7 +38,7 @@
         $('#course_id').val('');
         $('#modalTitle').text('Thêm Khóa Học Mới');
         $('#errorList').addClass('d-none').html('');
-        $('#courseModal').modal('show');
+        showBootstrapModal('#courseModal');
     }
 
     // Mở Modal Sửa (Gọi AJAX lấy data)
@@ -33,7 +53,7 @@
             $('#weekly_price').val(parseFloat(data.weekly_price));
             $('#description').val(data.description);
             $('#modalTitle').text('Sửa Khóa Học');
-            $('#courseModal').modal('show');
+            showBootstrapModal('#courseModal');
         });
     }
 
@@ -58,7 +78,7 @@
             type: method,
             data: data,
             success: function(response) {
-                $('#courseModal').modal('hide');
+                hideBootstrapModal('#courseModal');
                 showToast(response.success, 'success', 'Thành công').then(() => {
                     location.reload();
                 });

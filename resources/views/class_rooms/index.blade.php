@@ -6,7 +6,7 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="fw-bold text-primary"><i class="fas fa-chalkboard-teacher me-2"></i> Quản lý Lớp học</h2>
             <div>
-                <button class="btn btn-outline-secondary me-2" onclick="$('#shiftsModal').modal('show')">
+                <button class="btn btn-outline-secondary me-2" onclick="showBootstrapModal('#shiftsModal')">
                     <i class="fas fa-clock"></i> Quản lý Ca học
                 </button>
                 <button class="btn btn-primary" onclick="openAddClassModal()">

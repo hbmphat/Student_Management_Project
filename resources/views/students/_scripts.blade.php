@@ -4,10 +4,30 @@
         $(document).ready(function() {
             let currentStudentId = null;
 
+            function showBootstrapModal(selector) {
+                const element = document.querySelector(selector);
+
+                if (!element) {
+                    return;
+                }
+
+                bootstrap.Modal.getOrCreateInstance(element).show();
+            }
+
+            function hideBootstrapModal(selector) {
+                const element = document.querySelector(selector);
+
+                if (!element) {
+                    return;
+                }
+
+                bootstrap.Modal.getOrCreateInstance(element).hide();
+            }
+
             // 1. Mở Modal Thêm
             window.openAddStudentModal = function() {
                 $('#form-add-student')[0].reset();
-                $('#addStudentModal').modal('show');
+                showBootstrapModal('#addStudentModal');
             }
 
             // 2. Thêm Học viên (Hỗ trợ Upload File)
@@ -28,7 +48,7 @@
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                     success: function(res) {
-                        $('#addStudentModal').modal('hide');
+                        hideBootstrapModal('#addStudentModal');
                         showToast(res.message, 'success', 'Thành công').then(() => location.reload());
                     },
                     error: function(xhr) {
@@ -41,7 +61,7 @@
             // 3. Mở Modal Chi tiết & Đổ dữ liệu
             window.viewStudent = function(id) {
                 currentStudentId = id;
-                $('#viewStudentModal').modal('show');
+                showBootstrapModal('#viewStudentModal');
                 $('#header-student-name').text('Đang tải...');
 
                 $.get(`/students/${id}`, function(res) {

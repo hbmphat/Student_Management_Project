@@ -1,8 +1,28 @@
 @push('scripts')
     <script>
+        function showBootstrapModal(selector) {
+            const element = document.querySelector(selector);
+
+            if (!element) {
+                return;
+            }
+
+            bootstrap.Modal.getOrCreateInstance(element).show();
+        }
+
+        function hideBootstrapModal(selector) {
+            const element = document.querySelector(selector);
+
+            if (!element) {
+                return;
+            }
+
+            bootstrap.Modal.getOrCreateInstance(element).hide();
+        }
+
         function openAddClassModal() {
             $('#form-add-class')[0].reset();
-            $('#addClassModal').modal('show');
+            showBootstrapModal('#addClassModal');
         }
 
         $('#form-add-class').submit(function(e) {
@@ -15,7 +35,7 @@
                 type: "POST",
                 data: $(this).serialize(),
                 success: function(response) {
-                    $('#addClassModal').modal('hide');
+                    hideBootstrapModal('#addClassModal');
                     showToast(response.message, 'success', 'Thành công').then(() => {
                         location.reload();
                     });
@@ -31,7 +51,7 @@
 
         function viewClass(id) {
             currentClassId = id;
-            $('#viewClassModal').modal('show');
+            showBootstrapModal('#viewClassModal');
 
             $('.edit-day-checkbox').prop('checked', false);
             $('#detail-class-name').text('Đang tải thông tin...');

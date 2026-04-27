@@ -1,4 +1,8 @@
-import 'bootstrap';
+import $ from 'jquery';
+import * as bootstrap from 'bootstrap';
+
+window.$ = window.jQuery = $;
+window.bootstrap = bootstrap;
 
 /**
  * We'll load the axios HTTP library which allows us to easily issue requests

@@ -26,6 +26,8 @@
 
     @include('layouts.admin._modalRegistrationCode')
 
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @push('scripts')
     <script>
@@ -57,25 +59,64 @@
             });
         };
 
-        function toggleSettings() {
-            $('#submenu-settings').slideToggle(200);
-            let arrow = $('#settings-arrow');
-            if (arrow.text() === 'expand_more') {
-                arrow.text('expand_less');
-            } else {
-                arrow.text('expand_more');
-            }
-        }
-        $(document).ready(function() {
-            $('#btn-toggle-sidebar').click(function() {
-                $('.sidebar').toggleClass('show');
-                $('#sidebarOverlay').toggleClass('active');
-            });
+        window.showBootstrapModal = function(selector) {
+            const element = document.querySelector(selector);
 
-            $('#sidebarOverlay').click(function() {
-                $('.sidebar').removeClass('show');
-                $(this).removeClass('active');
-            });
+            if (!element) {
+                return;
+            }
+
+            bootstrap.Modal.getOrCreateInstance(element).show();
+        };
+
+        window.hideBootstrapModal = function(selector) {
+            const element = document.querySelector(selector);
+
+            if (!element) {
+                return;
+            }
+
+            bootstrap.Modal.getOrCreateInstance(element).hide();
+        };
+
+        window.toggleSettings = function() {
+            const submenu = document.getElementById('submenu-settings');
+            const arrow = document.getElementById('settings-arrow');
+
+            if (!submenu || !arrow) {
+                return;
+            }
+
+            const isHidden = submenu.style.display === 'none' || submenu.style.display === '';
+            submenu.style.display = isHidden ? 'flex' : 'none';
+            arrow.textContent = isHidden ? 'expand_less' : 'expand_more';
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.querySelector('.sidebar');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+            const toggleSidebarButton = document.getElementById('btn-toggle-sidebar');
+            const settingsButton = document.getElementById('btn-settings');
+
+            if (settingsButton) {
+                settingsButton.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    window.toggleSettings();
+                });
+            }
+
+            if (toggleSidebarButton && sidebar && sidebarOverlay) {
+                toggleSidebarButton.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    sidebar.classList.toggle('show');
+                    sidebarOverlay.classList.toggle('active');
+                });
+
+                sidebarOverlay.addEventListener('click', function() {
+                    sidebar.classList.remove('show');
+                    sidebarOverlay.classList.remove('active');
+                });
+            }
         });
 
         @if (session('success'))

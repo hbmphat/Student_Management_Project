@@ -36,7 +36,7 @@
     function openAdminCodeModal() {
         $('#admin_confirm_password').val('');
         $('#admin_confirm_password').removeClass('is-invalid');
-        $('#adminCodeModal').modal('show');
+        showBootstrapModal('#adminCodeModal');
     }
 
     // Xử lý gửi mật khẩu qua AJAX
@@ -53,7 +53,7 @@
                 password: $('#admin_confirm_password').val()
             },
             success: function(response) {
-                $('#adminCodeModal').modal('hide');
+                hideBootstrapModal('#adminCodeModal');
                 btn.prop('disabled', false).text('Xác nhận & Tạo mã');
                 
                 showToast('', 'success', 'Cấp mã thành công!', {

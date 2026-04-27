@@ -55,7 +55,7 @@
         </a>
 
         <div class="nav-group mt-3">
-            <div class="nav-item" id="btn-settings" style="cursor: pointer;" onclick="toggleSettings()">
+            <div class="nav-item" id="btn-settings" style="cursor: pointer;">
                 <span class="material-symbols-outlined">settings</span>
                 <p class="m-0 flex-grow-1">Cài đặt chung</p>
                 <span class="material-symbols-outlined" id="settings-arrow">expand_more</span>
