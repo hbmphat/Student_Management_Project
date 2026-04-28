@@ -45,7 +45,7 @@
         </a>
 
         <a class="nav-item {{ request()->routeIs('teachers.*') ? 'active' : '' }}" href="{{ route('teachers.index') }}">
-            <span class="material-symbols-outlined">school</span>
+            <span class="material-symbols-outlined">article_person</span>
             <p class="m-0">Quản lý Giảng viên</p>
         </a>
 
