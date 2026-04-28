@@ -4,7 +4,7 @@
 @section('content')
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold text-primary"><i class="fas fa-user-graduate me-2"></i> Danh Sách Học viên</h2>
+        <h2 class="fw-bold text-primary"><i class="fas fa-user-graduate me-2"></i> Danh sách Học viên</h2>
         <button class="btn btn-primary fw-bold shadow-sm" onclick="openAddStudentModal()">
             <i class="fas fa-plus-circle"></i> Thêm Học viên
         </button>

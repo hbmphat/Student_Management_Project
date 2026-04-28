@@ -62,7 +62,7 @@
                                 </div>
                             </div>
 
-                            <h6 class="fw-bold text-secondary mb-3 border-bottom pb-2 mt-4">ĐỊA CHỈ THƯỜNG TRÚ</h6>
+                            <h6 class="fw-bold text-secondary mb-3 border-bottom pb-2 mt-4">Thông tin Địa chỉ</h6>
                             <div class="row mb-3">
                                 <div class="col-md-4 mb-3">
                                     <label class="form-label small fw-bold">Tỉnh/Thành phố</label>
