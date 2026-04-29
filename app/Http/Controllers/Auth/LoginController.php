@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
@@ -27,7 +28,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/teachers';
+    protected $redirectTo = '/home';
 
     /**
      * Create a new controller instance.
@@ -45,20 +46,28 @@ class LoginController extends Controller
         return 'username';
     }
 
-    // 2. Ghi đè: Hành động ngay sau khi đăng nhập thành công
     protected function authenticated(Request $request, $user)
     {
         // Kiểm tra xem user có bị khóa không?
         if ($user->status === 'locked') {
             Auth::logout(); // Đăng xuất ngay lập tức
-            return redirect('/login')->withErrors([
-                'username' => 'Tài khoản của bạn đã bị khóa. Vui lòng liên hệ Admin.',
-            ]);
+            // Dùng session('error') thay vì withErrors để Toast bắt được
+            return redirect('/login')->with('error', 'Tài khoản của bạn đã bị khóa. Vui lòng liên hệ Admin.');
         }
 
-        // Nếu bình thường thì cho qua
-        return redirect()->intended($this->redirectPath());
+        // Chuyển hướng vào trong hệ thống kèm thông báo 'success'
+        // File master.blade.php của bạn sẽ tự động bắt chữ 'success' này và hiện Toast!
+        return redirect()->intended($this->redirectPath())
+                         ->with('success', 'Chào mừng ' . $user->name . ' quay trở lại!');
     }
+
+    protected function sendFailedLoginResponse(Request $request)
+    {
+        throw ValidationException::withMessages([
+            'username' => ['Tên đăng nhập hoặc mật khẩu chưa đúng.'],
+        ]);
+    }
+
     protected function loggedOut(Request $request)
     {
         return redirect('/login');

@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Request;
 
 class RegisterController extends Controller
 {
@@ -58,13 +59,24 @@ class RegisterController extends Controller
                 // Viết Custom Rule để kiểm tra Mã Đăng Ký
                 function ($attribute, $value, $fail) {
                     $code = \App\Models\RegistrationCode::where('code', $value)
-                                ->where('is_used', false) // Mã phải chưa được dùng
-                                ->first();
+                        ->where('is_used', false) // Mã phải chưa được dùng
+                        ->first();
                     if (!$code) {
                         $fail('Mã đăng ký không tồn tại hoặc đã được sử dụng.');
                     }
                 },
             ],
+        ], [
+            'name.required' => 'Vui lòng nhập họ và tên.',
+            'username.required' => 'Vui lòng nhập tên đăng nhập.',
+            'username.unique' => 'Tên đăng nhập này đã được sử dụng.',
+            'email.required' => 'Vui lòng nhập địa chỉ email.',
+            'email.email' => 'Email không đúng định dạng.',
+            'email.unique' => 'Email này đã tồn tại trong hệ thống.',
+            'password.required' => 'Vui lòng nhập mật khẩu.',
+            'password.min' => 'Mật khẩu phải có ít nhất 8 ký tự.',
+            'password.confirmed' => 'Mật khẩu xác nhận không khớp.',
+            'registration_code.required' => 'Vui lòng nhập mã đăng ký.',
         ]);
     }
 
@@ -93,5 +105,11 @@ class RegisterController extends Controller
         ]);
 
         return $user;
+    }
+    protected function registered(Request $request, $user)
+    {
+        // Gửi toast success và redirect
+        return redirect($this->redirectPath())
+                    ->with('success', 'Chúc mừng! Tài khoản của bạn đã được tạo thành công. Đăng nhập để tiếp tục.');
     }
 }

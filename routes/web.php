@@ -14,6 +14,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/teachers/export-pdf', [App\Http\Controllers\TeacherController::class, 'exportPdf'])->name('teachers.export-pdf');
     Route::resource('teachers', App\Http\Controllers\TeacherController::class);
     Route::resource('registration-codes', App\Http\Controllers\RegistrationCodeController::class)->only(['index', 'store', 'destroy']);
+    Route::post('/registration-codes/{id}/toggle-block', [App\Http\Controllers\RegistrationCodeController::class, 'toggleBlock'])->name('registration-codes.toggle-block');
+    Route::post('/profile/change-password', [App\Http\Controllers\HomeController::class, 'changePassword'])->name('profile.change-password');
     Route::resource('class-rooms', App\Http\Controllers\ClassRoomController::class);
     Route::post('/shifts', [App\Http\Controllers\ClassRoomController::class, 'storeShift'])->name('shifts.store');
     Route::delete('/shifts/{id}', [App\Http\Controllers\ClassRoomController::class, 'destroyShift'])->name('shifts.destroy');

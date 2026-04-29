@@ -82,7 +82,7 @@
                     </a>
                 @endif
 
-                <a href="#" class="sub-item" onclick="#">
+                <a href="{{ route('profile.change-password') }}" class="sub-item" onclick="event.preventDefault(); openChangePasswordModal()">
                     <span class="material-symbols-outlined fs-5">lock_reset</span>
                     <span>Đổi mật khẩu</span>
                 </a>

@@ -15,12 +15,38 @@ class RegistrationCodeController extends Controller
             abort(403, 'Truy cập bị từ chối. Chỉ admin mới có quyền thực hiện hành động này.');
         }
     }
-    public function index()
-    {
-        $this->checkAdmin();
-        $codes = RegistrationCode::with(['creator', 'user'])->orderBy('created_at', 'desc')->get();
-        return view('registration_codes.index', compact('codes'));
+    // Trong RegistrationCodeController.php
+
+public function index(Request $request)
+{
+    if ($request->ajax()) {
+        // Eager load quan hệ 'user' (giả định bạn đã đặt tên quan hệ trong Model là usedBy hoặc user)
+        $codes = RegistrationCode::with('user:id,name,username')->orderBy('id', 'desc')->get();
+        return response()->json($codes);
     }
+    return view('registration_codes.index');
+}
+
+public function toggleBlock($id)
+{
+    $code = RegistrationCode::findOrFail($id);
+    
+    // Đảo trạng thái khóa của mã
+    $code->is_blocked = !$code->is_blocked;
+    $code->save();
+
+    // Nếu mã này đã được sử dụng, ta khóa/mở khóa luôn tài khoản liên kết
+    if ($code->is_used && $code->used_by) {
+        $user = \App\Models\User::find($code->used_by);
+        if ($user) {
+            $user->status = $code->is_blocked ? 'locked' : 'active';
+            $user->save();
+        }
+    }
+
+    $statusText = $code->is_blocked ? 'Đã khóa' : 'Đã mở khóa';
+    return response()->json(['success' => true, 'message' => $statusText . ' thành công!']);
+}
 
     public function store(Request $request)
     {
