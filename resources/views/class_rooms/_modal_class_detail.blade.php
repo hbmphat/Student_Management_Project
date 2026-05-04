@@ -89,8 +89,7 @@
                             </div>
 
                             <div class="mt-4 d-grid gap-2">
-                                <button type="submit" class="btn btn-warning fw-bold"><i class="fas fa-save"></i> CẬP
-                                    NHẬT TOÀN BỘ</button>
+                                <button type="submit" class="btn btn-warning fw-bold"><i class="fas fa-save"></i>Cập Nhật</button>
                                 <button type="button" class="btn btn-outline-danger btn-sm" onclick="deleteClass()">Xóa
                                     Lớp</button>
                             </div>

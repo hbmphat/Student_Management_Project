@@ -113,7 +113,7 @@
                                 <button type="button" class="btn btn-outline-danger" onclick="deleteStudent()"><i
                                         class="fas fa-trash"></i> Xóa Học viên</button>
                                 <button type="submit" class="btn btn-warning fw-bold"><i class="fas fa-save"></i>
-                                    Cập Nhật Lưu Trữ</button>
+                                    Cập Nhật</button>
                             </div>
                         </form>
                     </div>

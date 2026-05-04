@@ -314,6 +314,7 @@ class ClassRoomController extends Controller
             ->pluck('student_id');
 
         $students = Student::whereNotIn('id', $excludedIds)
+            ->where('status', 'studying')
             ->where(function ($query) use ($q) {
                 $query->where('name', 'LIKE', "%{$q}%")
                     ->orWhere('uuid', 'LIKE', "%{$q}%");
@@ -327,11 +328,40 @@ class ClassRoomController extends Controller
     // 3. thêm học viên vào lớp
     public function addStudent(Request $request, $id)
     {
-        $class = ClassRoom::findOrFail($id);
-        // đính kèm học viên vào bảng trung gian
-        $class->students()->attach($request->student_id, ['status' => 'studying']);
+        // 1. Tìm lớp học
+        $classRoom = \App\Models\ClassRoom::findOrFail($id);
 
-        return response()->json(['message' => 'Đã thêm học viên vào lớp!']);
+        // =========================================================
+        // BỔ SUNG VALIDATE: Kiểm tra trạng thái lớp học
+        // (Thay chữ 'cancelled' bằng giá trị thực tế bạn lưu trong DB nhé, VD: 'canceled', 'closed', 'huy')
+        // =========================================================
+        if ($classRoom->status === 'canceled') {
+            return response()->json([
+                'success' => false, 
+                'message' => 'Không thể thêm học viên vì lớp học này đã bị hủy!'
+            ], 400); // Trả về lỗi 400 Bad Request để AJAX/Giao diện bắt được
+        }
+
+        // 2. Validate dữ liệu gửi lên
+        $request->validate([
+            'student_id' => 'required|exists:students,id'
+        ]);
+
+        // 3. Kiểm tra xem học viên đã tồn tại trong lớp này chưa
+        if ($classRoom->students()->where('students.id', $request->student_id)->exists()) {
+            return response()->json([
+                'success' => false, 
+                'message' => 'Học viên này đã có trong lớp!'
+            ], 400);
+        }
+
+        // 4. Thêm học viên vào lớp (Qua bảng trung gian class_room_student)
+        $classRoom->students()->attach($request->student_id);
+
+        return response()->json([
+            'success' => true, 
+            'message' => 'Thêm học viên vào lớp thành công!'
+        ]);
     }
 
     // 4. xóa học viên khỏi lớp

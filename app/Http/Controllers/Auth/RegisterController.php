@@ -97,7 +97,7 @@ class RegisterController extends Controller
             'status' => 'active',
         ]);
 
-        // Đánh dấu Mã Đăng Ký đã bị xài
+        // Đánh dấu Mã Đăng Ký đã được sử dụng
         $code = \App\Models\RegistrationCode::where('code', $data['registration_code'])->first();
         $code->update([
             'is_used' => true,
