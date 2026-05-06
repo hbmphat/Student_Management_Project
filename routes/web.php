@@ -11,7 +11,7 @@ Route::get('/', function () {
 });
 
 // ================= PUBLIC ROUTES =================
-Route::get('/teachers', [App\Http\Controllers\HomeController::class, 'index'])->name('teachers.index');
+Route::get('/teachers', [App\Http\Controllers\HomeController::class, 'index'])->name('dashboard.public');
 
 // ================= PROTECTED ROUTES =================
 Route::middleware('auth')->group(function () {

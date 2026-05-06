@@ -19,7 +19,7 @@
     </div>
 
     <nav class="nav-menu d-flex flex-column">
-        <a class="nav-item" href="#">
+        <a class="nav-item {{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}">
             <span class="material-symbols-outlined">dashboard</span>
             <p class="m-0">Trang Chủ</p>
         </a>

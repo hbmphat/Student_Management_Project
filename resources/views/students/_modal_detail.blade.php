@@ -21,8 +21,8 @@
                             <button class="btn btn-outline-secondary"
                                 onclick="showToast('Module Face ID đang phát triển', 'info', 'Thông báo')"><i class="fas fa-camera"></i> Đăng ký
                                 Khuôn mặt</button>
-                            <button class="btn btn-outline-success"><i class="fas fa-money-bill-wave"></i> Xem Học
-                                Phí</button>
+                            {{-- <button class="btn btn-outline-success"><i class="fas fa-money-bill-wave"></i> Xem Học
+                                Phí</button> --}}
                         </div>
                     </div>
 
