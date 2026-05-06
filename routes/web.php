@@ -74,4 +74,16 @@ Route::middleware('auth')->group(function () {
             App\Models\Ward::where('district_id', $id)->orderBy('name')->get()
         );
     });
+
+    // ===== TUITIONS =====
+    Route::get('/tuitions', [App\Http\Controllers\TuitionController::class, 'index'])->name('tuitions.index');
+    //===== PAYMENT PROCESSING =====
+    Route::post('/tuitions/pay', [App\Http\Controllers\TuitionController::class, 'processPayment']);
+
+    //===== PROMOTIONS =====
+    Route::resource('promotions', \App\Http\Controllers\PromotionController::class)->except(['create', 'edit']);
+Route::post('promotions/{id}/toggle', [\App\Http\Controllers\PromotionController::class, 'toggleActive']);
+
+Route::post('/tuitions/pay', [App\Http\Controllers\TuitionController::class, 'processPayment']);
+Route::get('/tuitions/receipt/{code}', [App\Http\Controllers\TuitionController::class, 'printReceipt']);
 });

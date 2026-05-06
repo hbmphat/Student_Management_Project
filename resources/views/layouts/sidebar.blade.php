@@ -39,7 +39,7 @@
             <p class="m-0">Quản lý Khóa học</p>
         </a>
 
-        <a class="nav-item" href="#">
+        <a class="nav-item {{ request()->routeIs('tuitions.*') ? 'active' : '' }}" href="{{ route('tuitions.index') }}">
             <span class="material-symbols-outlined">payment</span>
             <p class="m-0">Quản lý Thanh toán</p>
         </a>

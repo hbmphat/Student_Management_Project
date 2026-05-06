@@ -357,7 +357,13 @@ class ClassRoomController extends Controller
 
         // 4. Thêm học viên vào lớp (Qua bảng trung gian class_room_student)
         $classRoom->students()->attach($request->student_id);
-
+        // ==========================================
+        // BỔ SUNG: Tạo hồ sơ học phí rỗng cho học viên này
+        // ==========================================
+        \App\Models\Tuition::firstOrCreate([
+            'student_id' => $request->student_id,
+            'class_room_id' => $classRoom->id,
+        ]);
         return response()->json([
             'success' => true, 
             'message' => 'Thêm học viên vào lớp thành công!'

@@ -11,8 +11,16 @@ class Student extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'name', 'dob', 'gender', 'parent_phone', 'parent_email', 
-        'street_address', 'ward_id', 'avatar', 'face_image', 'status'
+        'name',
+        'dob',
+        'gender',
+        'parent_phone',
+        'parent_email',
+        'street_address',
+        'ward_id',
+        'avatar',
+        'face_image',
+        'status'
     ];
 
     // 1. TỰ ĐỘNG SINH UUID (HV000001) TRƯỚC KHI LƯU VÀO DB
@@ -36,7 +44,7 @@ class Student extends Model
         static::updated(function ($student) {
             // Kiểm tra xem cột 'status' có thực sự bị thay đổi hay không
             if ($student->wasChanged('status')) {
-                
+
                 // Cập nhật bảng trung gian (class_student)
                 // CHÚ Ý: Chỉ cập nhật những lớp chưa kết thúc (khác 'completed')
                 \Illuminate\Support\Facades\DB::table('class_student')
@@ -98,5 +106,13 @@ class Student extends Model
         $street = $this->street_address ? $this->street_address . ', ' : '';
 
         return "{$street}{$wardName}, {$districtName}, {$provinceName}";
+    }
+    public function tuitions()
+    {
+        return $this->hasMany(Tuition::class);
+    }
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
     }
 }

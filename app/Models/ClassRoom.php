@@ -50,4 +50,8 @@ class ClassRoom extends Model
             ->withPivot('id', 'status')
             ->withTimestamps();
     }
+    public function tuitions()
+    {
+        return $this->hasMany(Tuition::class);
+    }
 }
