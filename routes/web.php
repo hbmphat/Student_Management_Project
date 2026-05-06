@@ -80,6 +80,7 @@ Route::middleware('auth')->group(function () {
     //===== PAYMENT PROCESSING =====
     Route::post('/tuitions/pay', [App\Http\Controllers\TuitionController::class, 'processPayment']);
     Route::post('/tuitions/extend', [App\Http\Controllers\TuitionController::class, 'processExtend']);
+    Route::get('/tuitions/{id}/history', [App\Http\Controllers\TuitionController::class, 'history']);
 
     //===== PROMOTIONS =====
     Route::resource('promotions', \App\Http\Controllers\PromotionController::class)->except(['create', 'edit']);

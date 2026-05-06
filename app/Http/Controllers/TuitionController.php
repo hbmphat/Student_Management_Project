@@ -4,15 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Payment;
 use App\Models\Promotion;
-use App\Models\TuitionHistory;
-use Illuminate\Http\Request;
 use App\Models\Tuition;
+use App\Models\TuitionHistory;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 class TuitionController extends Controller
 {
@@ -34,8 +34,6 @@ class TuitionController extends Controller
             ->orderByRaw('COALESCE(to_date, created_at) ASC')
             ->orderByDesc('id');
 
-        // (Tùy chọn) Thêm logic tìm kiếm ở đây nếu cần
-
         $tuitions = $query->paginate(15);
 
         // Xử lý 4 trạng thái realtime
@@ -49,14 +47,13 @@ class TuitionController extends Controller
                 $toDate = Carbon::parse($t->to_date)->startOfDay();
 
                 if ($toDate->lt($todayDate)) {
-                    $t->status_color = 'danger'; // Đỏ: Quá hạn
+                    $t->status_color = 'danger';
                     $t->status_text = 'Quá hạn học phí';
                 } elseif ($toDate->equalTo($todayDate)) {
-                    // Vàng: hết học phí đúng ngày hiện tại
                     $t->status_color = 'warning';
                     $t->status_text = 'Hết học phí';
                 } else {
-                    $t->status_color = 'success'; // Xanh: Còn hạn
+                    $t->status_color = 'success';
                     $t->status_text = 'Còn học phí';
                 }
             }
@@ -64,27 +61,25 @@ class TuitionController extends Controller
 
         return view('tuitions.index', compact('tuitions'));
     }
+
     public function processPayment(Request $request)
     {
         $request->validate([
             'tuition_id' => 'required|exists:tuitions,id',
-            'paid_weeks' => 'required|integer|min:1', // Validate số tuần
+            'paid_weeks' => 'required|integer|min:1',
             'payment_method' => 'required|in:cash,vietqr',
-            'promotion_id' => 'nullable|exists:promotions,id'
+            'promotion_id' => 'nullable|exists:promotions,id',
         ]);
 
         $result = DB::transaction(function () use ($request) {
-            // 1. Lấy thông tin Tuition -> ClassRoom -> Course
             $tuition = Tuition::with('classRoom.course')->lockForUpdate()->findOrFail($request->tuition_id);
 
-            // 2. Tính toán Giá gốc = Số tuần x Giá 1 tuần của Khóa học
             $pricePerWeek = (float) ($tuition->classRoom->course->weekly_price ?? 0);
             $originalAmount = round($request->paid_weeks * $pricePerWeek, 2);
 
             $discountAmount = 0;
             $promo = null;
 
-            // 3. Nếu có khuyến mãi
             if ($request->filled('promotion_id')) {
                 $promo = Promotion::whereKey($request->promotion_id)
                     ->where('is_active', true)
@@ -96,20 +91,16 @@ class TuitionController extends Controller
                     ]);
                 }
 
-                if ($promo) {
-                    $discountAmount = round($originalAmount * ($promo->discount_percent / 100), 2);
-                }
+                $discountAmount = round($originalAmount * ($promo->discount_percent / 100), 2);
             }
 
             $finalAmount = max(round($originalAmount - $discountAmount, 2), 0);
 
-            // 4. Sinh Mã Biên Lai duy nhất
             do {
                 $receiptCode = 'RC' . now()->format('ymd') . strtoupper(Str::random(4));
             } while (Payment::where('receipt_code', $receiptCode)->exists());
 
-            // 5. Lưu payment
-            $payment = Payment::create([
+            Payment::create([
                 'student_id' => $tuition->student_id,
                 'class_room_id' => $tuition->class_room_id,
                 'paid_weeks' => $request->paid_weeks,
@@ -210,21 +201,78 @@ class TuitionController extends Controller
             'paid_weeks' => $result['paid_weeks'],
         ]);
     }
+
+    public function history($tuitionId)
+    {
+        $tuition = Tuition::with(['student', 'classRoom.course', 'histories.payment.promotion', 'histories.creator'])
+            ->findOrFail($tuitionId);
+
+        $payments = Payment::with(['promotion', 'creator'])
+            ->where('student_id', $tuition->student_id)
+            ->where('class_room_id', $tuition->class_room_id)
+            ->orderByDesc('created_at')
+            ->get()
+            ->map(function (Payment $payment) {
+                return [
+                    'receipt_code' => $payment->receipt_code,
+                    'paid_weeks' => $payment->paid_weeks,
+                    'original_amount' => $payment->original_amount,
+                    'discount_amount' => $payment->discount_amount,
+                    'final_amount' => $payment->final_amount,
+                    'payment_method' => $payment->payment_method,
+                    'payment_method_label' => $payment->payment_method === 'cash' ? 'Tiền mặt' : 'VietQR',
+                    'is_used' => (bool) $payment->is_used,
+                    'promotion_name' => $payment->promotion->name ?? null,
+                    'created_at' => optional($payment->created_at)->format('d/m/Y H:i'),
+                ];
+            });
+
+        $tuitionHistories = $tuition->histories
+            ->sortByDesc('created_at')
+            ->values()
+            ->map(function (TuitionHistory $history) {
+                return [
+                    'action_type' => $history->action_type,
+                    'action_label' => match ($history->action_type) {
+                        'extend' => 'Gia hạn',
+                        'compensate' => 'Bù hạn',
+                        'manual_edit' => 'Chỉnh tay',
+                        default => ucfirst($history->action_type),
+                    },
+                    'days_added' => $history->days_added,
+                    'old_to_date' => $history->old_to_date,
+                    'new_to_date' => $history->new_to_date,
+                    'note' => $history->note,
+                    'receipt_code' => $history->payment?->receipt_code,
+                    'created_at' => optional($history->created_at)->format('d/m/Y H:i'),
+                ];
+            });
+
+        return response()->json([
+            'success' => true,
+            'tuition' => [
+                'id' => $tuition->id,
+                'student_name' => $tuition->student->name ?? 'N/A',
+                'student_uuid' => $tuition->student->uuid ?? 'N/A',
+                'class_name' => $tuition->classRoom->name ?? 'N/A',
+                'current_from_date' => $tuition->from_date,
+                'current_to_date' => $tuition->to_date,
+            ],
+            'payments' => $payments,
+            'histories' => $tuitionHistories,
+        ]);
+    }
+
     // 2. Hàm Xuất PDF Biên lai
     public function printReceipt($receiptCode)
     {
-        // Lấy thông tin hóa đơn kèm các bảng liên quan
         $payment = Payment::with(['student', 'classRoom.course', 'creator', 'promotion'])
             ->where('receipt_code', $receiptCode)
             ->firstOrFail();
 
-        // Nạp View và truyền biến $payment vào
         $pdf = Pdf::loadView('tuitions.pdf_receipt', compact('payment'));
-
-        // Thiết lập khổ giấy A5 ngang (thường dùng cho biên lai)
         $pdf->setPaper('a5', 'landscape');
 
-        // Xuất trực tiếp trên trình duyệt (stream) hoặc dùng download() để ép tải về
         return $pdf->stream('Bien-Lai-' . $payment->receipt_code . '.pdf');
     }
 }

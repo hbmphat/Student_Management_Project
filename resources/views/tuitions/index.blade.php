@@ -74,6 +74,12 @@
                                             title="Gia hạn học phí bằng Biên lai">
                                             <i class="fas fa-calendar-plus"></i> Gia hạn
                                         </button>
+
+                                        <button class="btn btn-sm btn-outline-info fw-bold mb-1"
+                                            onclick="openHistoryModal({{ $t->id }}, '{{ $t->student->name }}')"
+                                            title="Xem lịch sử thanh toán và hạn học phí">
+                                            <i class="fas fa-history"></i> Lịch sử
+                                        </button>
                                     </td>
                                 </tr>
                             @empty
@@ -95,6 +101,7 @@
     @include('tuitions._modal_payment')
     @include('tuitions._modal_promotions')
     @include('tuitions._modal_extend')
+    @include('tuitions._modal_history')
     @push('scripts')
         <script>
             // Cập nhật hàm mở Modal nhận thêm giá 1 tuần
@@ -125,6 +132,91 @@
                 $('#extend_student_name').text(studentName);
                 $('#extend_receipt_code').val('');
                 showBootstrapModal('#extendModal');
+            }
+
+            window.openHistoryModal = function(tuitionId, studentName) {
+                $('#history_student_name').text(studentName);
+                $('#history_class_name').text('Đang tải...');
+                $('#history_current_period').text('Đang tải...');
+                $('#history_payments_tbody').html('<tr><td colspan="6" class="text-center py-3 text-muted"><i class="fas fa-spinner fa-spin me-2"></i>Đang tải...</td></tr>');
+                $('#history_period_tbody').html('<tr><td colspan="5" class="text-center py-3 text-muted"><i class="fas fa-spinner fa-spin me-2"></i>Đang tải...</td></tr>');
+                showBootstrapModal('#historyModal');
+
+                $.ajax({
+                    url: `/tuitions/${tuitionId}/history`,
+                    method: 'GET',
+                    dataType: 'json',
+                    success: function(response) {
+                        const tuition = response.tuition;
+                        const payments = response.payments || [];
+                        const histories = response.histories || [];
+
+                        $('#history_student_name').text(`${tuition.student_name} (${tuition.student_uuid})`);
+                        $('#history_class_name').text(tuition.class_name);
+
+                        if (tuition.current_from_date && tuition.current_to_date) {
+                            $('#history_current_period').text(`${formatDate(tuition.current_from_date)} - ${formatDate(tuition.current_to_date)}`);
+                        } else if (tuition.current_to_date) {
+                            $('#history_current_period').text(`Đến ${formatDate(tuition.current_to_date)}`);
+                        } else {
+                            $('#history_current_period').text('Chưa đóng học phí');
+                        }
+
+                        if (payments.length) {
+                            let paymentHtml = '';
+                            payments.forEach((payment, index) => {
+                                paymentHtml += `
+                                    <tr>
+                                        <td class="text-center">${index + 1}</td>
+                                        <td><strong>${payment.receipt_code}</strong></td>
+                                        <td>${payment.paid_weeks} tuần</td>
+                                        <td>${payment.promotion_name || '-'}</td>
+                                        <td class="text-end text-success fw-bold">${formatMoney(payment.final_amount)} đ</td>
+                                        <td><span class="badge ${payment.is_used ? 'bg-success' : 'bg-secondary'}">${payment.is_used ? 'Đã dùng' : 'Chưa dùng'}</span></td>
+                                    </tr>
+                                `;
+                            });
+                            $('#history_payments_tbody').html(paymentHtml);
+                        } else {
+                            $('#history_payments_tbody').html('<tr><td colspan="6" class="text-center py-3 text-muted">Chưa có giao dịch nào.</td></tr>');
+                        }
+
+                        if (histories.length) {
+                            let periodHtml = '';
+                            histories.forEach((history, index) => {
+                                periodHtml += `
+                                    <tr>
+                                        <td class="text-center">${index + 1}</td>
+                                        <td>${history.action_label}</td>
+                                        <td>${history.receipt_code || '-'}</td>
+                                        <td>${history.old_to_date ? formatDate(history.old_to_date) : '-'}</td>
+                                        <td>${history.new_to_date ? formatDate(history.new_to_date) : '-'}</td>
+                                    </tr>
+                                `;
+                            });
+                            $('#history_period_tbody').html(periodHtml);
+                        } else {
+                            $('#history_period_tbody').html('<tr><td colspan="5" class="text-center py-3 text-muted">Chưa có lịch sử thay đổi hạn học phí.</td></tr>');
+                        }
+                    },
+                    error: function(xhr) {
+                        hideBootstrapModal('#historyModal');
+                        const message = xhr.responseJSON?.message || 'Không tải được lịch sử học phí.';
+                        showToast(message, 'error', 'Thất bại');
+                    }
+                });
+            }
+
+            function formatDate(dateValue) {
+                if (!dateValue) return '-';
+                const date = new Date(dateValue);
+                if (Number.isNaN(date.getTime())) return dateValue;
+                return date.toLocaleDateString('vi-VN');
+            }
+
+            function formatMoney(value) {
+                const numberValue = Number(value) || 0;
+                return new Intl.NumberFormat('vi-VN').format(numberValue);
             }
 
             $('#extendForm').on('submit', function(e) {
