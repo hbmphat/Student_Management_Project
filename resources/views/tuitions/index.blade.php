@@ -47,7 +47,7 @@
                                         @if ($t->from_date && $t->to_date)
                                             <div class="fw-bold text-dark">
                                                 {{ \Carbon\Carbon::parse($t->from_date)->format('d/m/Y') }}
-                                                <i class="fas fa-arrow-right mx-1 text-muted"></i>
+                                                <i class="fas fa-arrow-right mx-1 text-muted">-</i>
                                                 {{ \Carbon\Carbon::parse($t->to_date)->format('d/m/Y') }}
                                             </div>
                                         @else
@@ -94,6 +94,7 @@
     </div>
     @include('tuitions._modal_payment')
     @include('tuitions._modal_promotions')
+    @include('tuitions._modal_extend')
     @push('scripts')
         <script>
             // Cập nhật hàm mở Modal nhận thêm giá 1 tuần
@@ -118,12 +119,65 @@
                 calculateAmount();
             });
 
+            window.openExtendModal = function(tuitionId, studentName) {
+                $('#extendForm')[0].reset();
+                $('#extend_tuition_id').val(tuitionId);
+                $('#extend_student_name').text(studentName);
+                $('#extend_receipt_code').val('');
+                showBootstrapModal('#extendModal');
+            }
+
+            $('#extendForm').on('submit', function(e) {
+                e.preventDefault();
+
+                const $form = $(this);
+                const $button = $('#btnConfirmExtend');
+                const originalButtonHtml = $button.html();
+
+                $.ajax({
+                    url: $form.attr('action') || '{{ url('/tuitions/extend') }}',
+                    method: 'POST',
+                    data: $form.serialize(),
+                    dataType: 'json',
+                    headers: {
+                        Accept: 'application/json'
+                    },
+                    beforeSend: function() {
+                        $button.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Đang xử lý...');
+                    },
+                    success: function(response) {
+                        hideBootstrapModal('#extendModal');
+                        showToast(response.message || 'Gia hạn thành công.', 'success', 'Thành công');
+                        window.location.reload();
+                    },
+                    error: function(xhr) {
+                        let message = 'Gia hạn thất bại.';
+
+                        if (xhr.responseJSON?.message) {
+                            message = xhr.responseJSON.message;
+                        } else if (xhr.responseJSON?.errors) {
+                            message = Object.values(xhr.responseJSON.errors).flat().join('\n');
+                        }
+
+                        showToast(message, 'error', 'Thất bại');
+                    },
+                    complete: function() {
+                        $button.prop('disabled', false).html(originalButtonHtml);
+                    }
+                });
+            });
+
             $('#paymentForm').on('submit', function(e) {
                 e.preventDefault();
 
                 const $form = $(this);
                 const $button = $('#btnConfirmPayment');
                 const originalButtonHtml = $button.html();
+                const receiptWindow = window.open('', '_blank');
+
+                if (receiptWindow) {
+                    receiptWindow.document.write('<p style="font-family:sans-serif;padding:20px">Đang tạo biên lai...</p>');
+                }
 
                 $.ajax({
                     url: $form.attr('action') || '{{ url('/tuitions/pay') }}',
@@ -139,14 +193,24 @@
                     success: function(response) {
                         hideBootstrapModal('#paymentModal');
 
-                        alert(response.message || 'Thanh toán thành công.');
+                        showToast(response.message || 'Thanh toán thành công.', 'success', 'Thành công');
                         if (response.receipt_code) {
-                            window.open('/tuitions/receipt/' + response.receipt_code, '_blank');
+                            const receiptUrl = '/tuitions/receipt/' + response.receipt_code;
+                            if (receiptWindow && !receiptWindow.closed) {
+                                receiptWindow.location = receiptUrl;
+                                receiptWindow.focus();
+                            } else {
+                                window.open(receiptUrl, '_blank');
+                            }
                         }
                         window.location.reload();
                     },
                     error: function(xhr) {
                         let message = 'Thanh toán thất bại.';
+
+                        if (receiptWindow && !receiptWindow.closed) {
+                            receiptWindow.close();
+                        }
 
                         if (xhr.responseJSON?.message) {
                             message = xhr.responseJSON.message;
@@ -154,7 +218,7 @@
                             message = Object.values(xhr.responseJSON.errors).flat().join('\n');
                         }
 
-                        alert(message);
+                        showToast(message, 'error', 'Thất bại');
                     },
                     complete: function() {
                         $button.prop('disabled', false).html(originalButtonHtml);
@@ -181,7 +245,7 @@
                 if (method === 'vietqr' && finalAmount > 0) {
                     let bankBin = '970423';
                     let bankAccount = '07564271147';
-                    let transferContent = `HP ${currentStudentUuid}-${currentStudentNName}-${weeks}Tuần`;
+                    let transferContent = `HP ${currentStudentUuid} ${currentStudentNName} ${weeks}Tuần`;
                     let qrUrl =
                         `https://img.vietqr.io/image/${bankBin}-${bankAccount}-compact.png?amount=${finalAmount}&addInfo=${transferContent}&accountName=ENGBREAK`;
 

@@ -182,13 +182,14 @@
                 data: $(this).serialize() + '&_token={{ csrf_token() }}',
                 success: function(res) {
                     btn.prop('disabled', false);
-                    showToast(res.message, 'success');
+                    showToast(res.message, 'success', 'Thành công');
                     backToListModal(); // Quay lại bảng
                     loadPromotions(); // Tải lại bảng
                 },
                 error: function(xhr) {
                     btn.prop('disabled', false);
-                    showToast('Lỗi! Vui lòng kiểm tra dữ liệu', 'error');
+                    const message = xhr.responseJSON?.message || Object.values(xhr.responseJSON?.errors || {}).flat().join('\n') || 'Lỗi! Vui lòng kiểm tra dữ liệu';
+                    showToast(message, 'error', 'Thất bại');
                 }
             });
         });

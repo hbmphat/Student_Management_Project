@@ -18,33 +18,46 @@ class TuitionController extends Controller
 {
     public function index(Request $request)
     {
-        // Lấy danh sách học phí, kèm theo thông tin Học viên và Lớp học
-        $query = Tuition::with(['student', 'classRoom.course'])->latest();
+        $today = Carbon::today()->toDateString();
+
+        // Sắp xếp theo ưu tiên: chưa đóng -> quá hạn -> hết -> còn học phí
+        $query = Tuition::with(['student', 'classRoom.course'])
+            ->orderByRaw(
+                "CASE
+                    WHEN to_date IS NULL THEN 0
+                    WHEN to_date < ? THEN 1
+                    WHEN DATE(to_date) = ? THEN 2
+                    ELSE 3
+                END",
+                [$today, $today]
+            )
+            ->orderByRaw('COALESCE(to_date, created_at) ASC')
+            ->orderByDesc('id');
 
         // (Tùy chọn) Thêm logic tìm kiếm ở đây nếu cần
 
         $tuitions = $query->paginate(15);
 
-        // Xử lý trạng thái Xanh/Vàng/Đỏ realtime
-        $today = Carbon::today();
+        // Xử lý 4 trạng thái realtime
+        $todayDate = Carbon::today();
 
         foreach ($tuitions as $t) {
             if (!$t->to_date) {
                 $t->status_color = 'secondary';
-                $t->status_text = 'Chưa đóng phí';
+                $t->status_text = 'Chưa đóng học phí';
             } else {
                 $toDate = Carbon::parse($t->to_date)->startOfDay();
 
-                if ($toDate->isPast() && !$toDate->isToday()) {
+                if ($toDate->lt($todayDate)) {
                     $t->status_color = 'danger'; // Đỏ: Quá hạn
-                    $t->status_text = 'Quá hạn';
-                } elseif ($toDate->diffInDays($today) <= 3) {
-                    // Vàng: Còn <= 3 ngày là hết hạn (Sắp hết trong ngày/tuần)
+                    $t->status_text = 'Quá hạn học phí';
+                } elseif ($toDate->equalTo($todayDate)) {
+                    // Vàng: hết học phí đúng ngày hiện tại
                     $t->status_color = 'warning';
-                    $t->status_text = 'Sắp hết hạn';
+                    $t->status_text = 'Hết học phí';
                 } else {
                     $t->status_color = 'success'; // Xanh: Còn hạn
-                    $t->status_text = 'Còn hạn';
+                    $t->status_text = 'Còn học phí';
                 }
             }
         }
@@ -110,21 +123,65 @@ class TuitionController extends Controller
                 'created_by' => Auth::id(),
             ]);
 
+            return [
+                'receipt_code' => $receiptCode,
+            ];
+        });
 
+        return response()->json([
+            'success' => true,
+            'message' => 'Thanh toán thành công! Đã tạo biên lai: ' . $result['receipt_code'],
+            'receipt_code' => $result['receipt_code'],
+        ]);
+    }
 
-            // 6. Cập nhật hạn học phí và ghi lịch sử
-            $daysAdded = (int) $request->paid_weeks * 7;
+    public function processExtend(Request $request)
+    {
+        $request->validate([
+            'tuition_id' => 'required|exists:tuitions,id',
+            'receipt_code' => 'required|string|max:50',
+        ]);
+
+        $result = DB::transaction(function () use ($request) {
+            $tuition = Tuition::lockForUpdate()->findOrFail($request->tuition_id);
+            $payment = Payment::where('receipt_code', trim($request->receipt_code))->lockForUpdate()->first();
+
+            if (!$payment) {
+                throw ValidationException::withMessages([
+                    'receipt_code' => 'Mã biên lai không tồn tại.',
+                ]);
+            }
+
+            if ($payment->is_used) {
+                throw ValidationException::withMessages([
+                    'receipt_code' => 'Mã biên lai này đã được dùng để gia hạn.',
+                ]);
+            }
+
+            if ($payment->student_id !== $tuition->student_id || $payment->class_room_id !== $tuition->class_room_id) {
+                throw ValidationException::withMessages([
+                    'receipt_code' => 'Mã biên lai không khớp với học viên hoặc lớp học hiện tại.',
+                ]);
+            }
+
+            $daysAdded = (int) $payment->paid_weeks * 7;
+            $today = Carbon::today()->startOfDay();
             $oldToDate = $tuition->to_date ? Carbon::parse($tuition->to_date)->startOfDay() : null;
-            $baseDate = $oldToDate ? $oldToDate->copy() : Carbon::today();
+            $baseDate = $oldToDate && $oldToDate->greaterThan($today) ? $oldToDate->copy() : $today->copy();
             $newToDate = $baseDate->addDays($daysAdded);
 
-            $fromDate = $tuition->from_date
-                ? Carbon::parse($tuition->from_date)->startOfDay()
-                : Carbon::today();
+            $fromDate = $tuition->from_date ? Carbon::parse($tuition->from_date)->startOfDay() : $today->copy();
+            if (!$oldToDate || $oldToDate->lessThan($today)) {
+                $fromDate = $today->copy();
+            }
 
             $tuition->update([
                 'from_date' => $fromDate->toDateString(),
                 'to_date' => $newToDate->toDateString(),
+            ]);
+
+            $payment->update([
+                'is_used' => true,
             ]);
 
             TuitionHistory::create([
@@ -134,21 +191,23 @@ class TuitionController extends Controller
                 'days_added' => $daysAdded,
                 'old_to_date' => $oldToDate?->toDateString(),
                 'new_to_date' => $newToDate->toDateString(),
-                'note' => 'Thanh toán ' . $request->paid_weeks . ' tuần' . ($promo ? ' với khuyến mãi ' . $promo->name : ''),
+                'note' => 'Gia hạn bằng biên lai ' . $payment->receipt_code . ' (' . $payment->paid_weeks . ' tuần)',
                 'created_by' => Auth::id(),
             ]);
 
             return [
-                'receipt_code' => $receiptCode,
+                'receipt_code' => $payment->receipt_code,
                 'new_to_date' => $newToDate->toDateString(),
+                'paid_weeks' => $payment->paid_weeks,
             ];
         });
 
         return response()->json([
             'success' => true,
-            'message' => 'Thanh toán thành công! Mã biên lai: ' . $result['receipt_code'],
+            'message' => 'Gia hạn thành công từ biên lai ' . $result['receipt_code'] . '.',
             'receipt_code' => $result['receipt_code'],
             'new_to_date' => $result['new_to_date'],
+            'paid_weeks' => $result['paid_weeks'],
         ]);
     }
     // 2. Hàm Xuất PDF Biên lai

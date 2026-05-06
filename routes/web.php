@@ -79,11 +79,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/tuitions', [App\Http\Controllers\TuitionController::class, 'index'])->name('tuitions.index');
     //===== PAYMENT PROCESSING =====
     Route::post('/tuitions/pay', [App\Http\Controllers\TuitionController::class, 'processPayment']);
+    Route::post('/tuitions/extend', [App\Http\Controllers\TuitionController::class, 'processExtend']);
 
     //===== PROMOTIONS =====
     Route::resource('promotions', \App\Http\Controllers\PromotionController::class)->except(['create', 'edit']);
 Route::post('promotions/{id}/toggle', [\App\Http\Controllers\PromotionController::class, 'toggleActive']);
-
-Route::post('/tuitions/pay', [App\Http\Controllers\TuitionController::class, 'processPayment']);
 Route::get('/tuitions/receipt/{code}', [App\Http\Controllers\TuitionController::class, 'printReceipt']);
 });
