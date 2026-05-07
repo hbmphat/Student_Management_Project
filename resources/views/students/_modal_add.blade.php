@@ -83,7 +83,7 @@
                 </div>
                 <div class="modal-footer bg-light">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    <button type="submit" class="btn btn-primary fw-bold" id="btn-save-student">Lưu Thông Tin</button>
+                    <button type="submit" class="btn btn-primary fw-bold" id="btn-save-student">Lưu</button>
                 </div>
             </form>
         </div>

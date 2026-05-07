@@ -5,7 +5,8 @@
     </div>
 
     <div class="user-info-box mx-3 mb-4 p-2 rounded d-flex align-items-center" style="background: rgba(255,255,255,0.1);">
-        <div class="user-avatar-circle bg-white text-dark fw-bold rounded-circle d-flex justify-content-center align-items-center me-3" style="width: 40px; height: 40px; font-size: 1.2rem;">
+        <div class="user-avatar-circle bg-white text-dark fw-bold rounded-circle d-flex justify-content-center align-items-center me-3"
+            style="width: 40px; height: 40px; font-size: 1.2rem;">
             {{ strtoupper(mb_substr(Auth::user()->name, 0, 1, 'UTF-8')) }}
         </div>
         <div class="user-details overflow-hidden">
@@ -23,13 +24,14 @@
             <span class="material-symbols-outlined">dashboard</span>
             <p class="m-0">Trang Chủ</p>
         </a>
-        
+
         <a class="nav-item {{ request()->routeIs('students.*') ? 'active' : '' }}" href="{{ route('students.index') }}">
             <span class="material-symbols-outlined">group</span>
             <p class="m-0">Quản lý Học viên</p>
         </a>
 
-        <a class="nav-item {{ request()->routeIs('class-rooms.*') ? 'active' : '' }}" href="{{ route('class-rooms.index') }}">
+        <a class="nav-item {{ request()->routeIs('class-rooms.*') ? 'active' : '' }}"
+            href="{{ route('class-rooms.index') }}">
             <span class="material-symbols-outlined">desk</span>
             <p class="m-0">Quản lý Lớp học</p>
         </a>
@@ -39,12 +41,14 @@
             <p class="m-0">Quản lý Khóa học</p>
         </a>
 
-        <a class="nav-item {{ request()->routeIs('tuitions.*') ? 'active' : '' }}" href="{{ route('tuitions.index') }}">
+        <a class="nav-item {{ request()->routeIs('tuitions.*') ? 'active' : '' }}"
+            href="{{ route('tuitions.index') }}">
             <span class="material-symbols-outlined">payment</span>
             <p class="m-0">Quản lý Thanh toán</p>
         </a>
 
-        <a class="nav-item {{ request()->routeIs('teachers.*') ? 'active' : '' }}" href="{{ route('teachers.index') }}">
+        <a class="nav-item {{ request()->routeIs('teachers.*') ? 'active' : '' }}"
+            href="{{ route('teachers.index') }}">
             <span class="material-symbols-outlined">article_person</span>
             <p class="m-0">Quản lý Giảng viên</p>
         </a>
@@ -60,14 +64,15 @@
                 <p class="m-0 flex-grow-1">Cài đặt chung</p>
                 <span class="material-symbols-outlined" id="settings-arrow">expand_more</span>
             </div>
-            
+
             <div class="submenu flex-column" id="submenu-settings" style="display: none;">
-                <a href="#" class="sub-item" id="btn-toggle-theme" aria-label="Chuyển sang giao diện tối" aria-pressed="false">
+                <a href="#" class="sub-item" id="btn-toggle-theme" aria-label="Chuyển sang giao diện tối"
+                    aria-pressed="false">
                     <span class="material-symbols-outlined fs-5" id="theme-icon">dark_mode</span>
                     <span id="theme-text">Giao diện Tối</span>
                 </a>
-                
-                @if(Auth::user()->role === 'admin')
+
+                @if (Auth::user()->role === 'admin')
                     <a href="#" class="sub-item" id="btn-backup">
                         <span class="material-symbols-outlined fs-5">cloud_download</span>
                         <span>Backup dữ liệu</span>
@@ -76,19 +81,22 @@
                         <span class="material-symbols-outlined fs-5">vpn_key</span>
                         <span>Tạo Key NV</span>
                     </a>
-                    <a href="#" class="sub-item">
+                    <a href="javascript:void(0)" class="sub-item" onclick="openActivityLogModal()">
                         <span class="material-symbols-outlined fs-5">history</span>
                         <span>Lịch sử hoạt động</span>
                     </a>
                 @endif
 
-                <a href="{{ route('profile.change-password') }}" class="sub-item" onclick="event.preventDefault(); openChangePasswordModal()">
+                <a href="{{ route('profile.change-password') }}" class="sub-item"
+                    onclick="event.preventDefault(); openChangePasswordModal()">
                     <span class="material-symbols-outlined fs-5">lock_reset</span>
                     <span>Đổi mật khẩu</span>
                 </a>
-                
-                <form action="{{ route('logout') }}" method="POST" id="sidebar-logout-form" class="d-none">@csrf</form>
-                <a href="#" class="sub-item text-danger" onclick="event.preventDefault(); document.getElementById('sidebar-logout-form').submit();">
+
+                <form action="{{ route('logout') }}" method="POST" id="sidebar-logout-form" class="d-none">@csrf
+                </form>
+                <a href="#" class="sub-item text-danger"
+                    onclick="event.preventDefault(); document.getElementById('sidebar-logout-form').submit();">
                     <span class="material-symbols-outlined fs-5">logout</span>
                     <span class="fw-bold">Đăng xuất</span>
                 </a>

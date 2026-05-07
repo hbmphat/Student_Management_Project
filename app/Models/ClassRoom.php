@@ -4,11 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class ClassRoom extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, LogsActivity;
 
     protected $fillable = [
         'name',
@@ -21,6 +22,13 @@ class ClassRoom extends Model
         'status'
     ];
 
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logFillable() // Theo dõi tất cả các cột trong $fillable
+            ->logOnlyDirty() // Chỉ lưu những cột bị thay đổi (khi Update)
+            ->setDescriptionForEvent(fn(string $eventName) => "Lớp học đã bị {$eventName}");
+    }
     public function shift()
     {
         return $this->belongsTo(Shift::class);

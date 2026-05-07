@@ -33,7 +33,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    <button type="submit" class="btn btn-primary" id="btnSave">Cập Nhật</button>
+                    <button type="submit" class="btn btn-primary" id="btnSave">Lưu</button>
                 </div>
             </form>
         </div>

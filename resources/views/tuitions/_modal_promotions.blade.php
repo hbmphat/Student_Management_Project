@@ -65,8 +65,8 @@
                     </div>
                 </div>
                 <div class="modal-footer bg-light">
-                    <button type="button" class="btn btn-secondary" onclick="backToListModal()">Quay lại</button>
-                    <button type="submit" class="btn btn-primary fw-bold" id="btnSavePromo">Lưu Khuyến mãi</button>
+                    <button type="button" class="btn btn-secondary" onclick="backToListModal()">Huỷ</button>
+                    <button type="submit" class="btn btn-primary fw-bold" id="btnSavePromo">Lưu</button>
                 </div>
             </form>
         </div>

@@ -12,6 +12,7 @@
         "laravel/tinker": "^3.0",
         "laravel/ui": "^4.6",
         "simplesoftwareio/simple-qrcode": "^4.2",
+        "spatie/laravel-activitylog": "^4.12",
         "spatie/laravel-backup": "^10.2"
     },
     "require-dev": {

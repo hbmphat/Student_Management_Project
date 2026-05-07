@@ -39,7 +39,8 @@ Route::middleware('auth')->group(function () {
 
     Route::post(
         '/registration-codes/{id}/toggle-block',
-        [App\Http\Controllers\RegistrationCodeController::class, 'toggleBlock'])->name('registration-codes.toggle-block');
+        [App\Http\Controllers\RegistrationCodeController::class, 'toggleBlock']
+    )->name('registration-codes.toggle-block');
 
     // ===== CLASS ROOMS =====
     Route::resource('class-rooms', App\Http\Controllers\ClassRoomController::class);
@@ -88,6 +89,9 @@ Route::middleware('auth')->group(function () {
 
     //===== PROMOTIONS =====
     Route::resource('promotions', \App\Http\Controllers\PromotionController::class)->except(['create', 'edit']);
-Route::post('promotions/{id}/toggle', [\App\Http\Controllers\PromotionController::class, 'toggleActive']);
-Route::get('/tuitions/receipt/{code}', [App\Http\Controllers\TuitionController::class, 'printReceipt']);
+    Route::post('promotions/{id}/toggle', [\App\Http\Controllers\PromotionController::class, 'toggleActive']);
+    Route::get('/tuitions/receipt/{code}', [App\Http\Controllers\TuitionController::class, 'printReceipt']);
+
+    // ===== ACTIVITY LOG =====
+    Route::get('/systems/activity-logs', [App\Http\Controllers\System\ActivityLogController::class, 'index'])->name('systems.activity-logs');
 });

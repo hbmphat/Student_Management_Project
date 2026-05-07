@@ -5,10 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Traits\LogsActivity; 
+use Spatie\Activitylog\LogOptions;          
 
 class Student extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, LogsActivity;
 
     protected $fillable = [
         'name',
@@ -22,6 +24,15 @@ class Student extends Model
         'face_image',
         'status'
     ];
+
+    // Cấu hình lưu lại những gì
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logFillable() // Theo dõi tất cả các cột trong $fillable
+            ->logOnlyDirty() // Chỉ lưu những cột bị thay đổi (khi Update)
+            ->setDescriptionForEvent(fn(string $eventName) => "Học viên đã bị {$eventName}");
+    }
 
     // 1. TỰ ĐỘNG SINH UUID (HV000001) TRƯỚC KHI LƯU VÀO DB
     protected static function boot()
