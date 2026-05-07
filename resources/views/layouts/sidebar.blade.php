@@ -61,10 +61,10 @@
                 <span class="material-symbols-outlined" id="settings-arrow">expand_more</span>
             </div>
             
-            <div class="submenu flex-column bg-dark bg-opacity-25" id="submenu-settings" style="display: none;">
-                <a href="#" class="sub-item" onclick="#">
-                    <span class="material-symbols-outlined fs-5">dark_mode</span>
-                    <span>Giao diện Tối</span>
+            <div class="submenu flex-column" id="submenu-settings" style="display: none;">
+                <a href="#" class="sub-item" id="btn-toggle-theme" aria-label="Chuyển sang giao diện tối" aria-pressed="false">
+                    <span class="material-symbols-outlined fs-5" id="theme-icon">dark_mode</span>
+                    <span id="theme-text">Giao diện Tối</span>
                 </a>
                 
                 @if(Auth::user()->role === 'admin')

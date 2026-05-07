@@ -7,7 +7,7 @@
 
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold text-dark"><i class="fas fa-chart-line text-primary me-2"></i> Tổng quan Trung tâm</h2>
+        <h2 class="fw-bold text-primary"><i class="fas fa-chart-line text-primary me-2"></i> Tổng quan Trung tâm</h2>
         <span class="text-muted"><i class="fas fa-clock"></i> Hôm nay: {{ \Carbon\Carbon::now()->format('d/m/Y') }}</span>
     </div>
 

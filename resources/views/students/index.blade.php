@@ -40,7 +40,7 @@
                                 <div class="d-flex align-items-center">
                                     <img src="{{ $student->display_avatar }}" class="rounded-circle me-3" style="width: 45px; height: 45px; object-fit: cover;">
                                     <div>
-                                        <div class="fw-bold text-dark">{{ $student->name }}</div>
+                                        <div class="fw-bold text-primary">{{ $student->name }}</div>
                                         <div class="text-muted small"><i class="fas fa-id-badge"></i> {{ $student->uuid }} | {{ $student->gender == 'male' ? 'Nam' : ($student->gender == 'female' ? 'Nữ' : 'Khác') }}</div>
                                     </div>
                                 </div>

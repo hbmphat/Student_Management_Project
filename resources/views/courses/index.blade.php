@@ -19,30 +19,30 @@
             </div>
         </div>
 
-        <div class="card border-0 shadow-sm">
-            <div class="card-body">
+        <div class="card border-0 shadow-sm rounded-3">
+            <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle">
-                        <thead class="table-light">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
                             <tr>
-                                {{-- <th>ID</th> --}}
-                                <th>Tên khóa học</th>
+                                <th class="ps-4">Tên khóa học</th>
                                 <th>Thời lượng</th>
                                 <th>Giá / Tuần</th>
                                 <th>Mô tả</th>
-                                <th class="text-center">Thao tác</th>
+                                <th class="text-center pe-4">Thao tác</th>
                             </tr>
                         </thead>
                         <tbody id="course-table-body">
                             @forelse($courses as $course)
                                 <tr id="row-{{ $course->id }}">
-                                    {{-- <td>#{{ $course->id }}</td> --}}
-                                    <td class="fw-bold">{{ $course->name }}</td>
+                                    <td class="ps-4">
+                                        <div class="fw-bold text-primary">{{ $course->name }}</div>
+                                    </td>
                                     <td>{{ $course->duration_months }} tháng</td>
                                     <td class="text-danger fw-bold">{{ number_format($course->weekly_price, 0, ',', '.') }}
                                         đ</td>
                                     <td>{{ $course->description }}</td>
-                                    <td class="text-center">
+                                    <td class="text-center pe-4">
                                         <button class="btn btn-sm btn-outline-primary mx-1"
                                             onclick="openEditModal({{ $course->id }})">Sửa</button>
                                         <button class="btn btn-sm btn-outline-danger"
@@ -51,7 +51,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="text-center text-muted py-4">Chưa có dữ liệu khóa học nào.
+                                    <td colspan="5" class="text-center py-4 text-muted">Chưa có dữ liệu khóa học nào.
                                     </td>
                                 </tr>
                             @endforelse

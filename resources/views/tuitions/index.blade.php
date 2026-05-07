@@ -34,7 +34,7 @@
                                                 class="rounded-circle me-3"
                                                 style="width: 45px; height: 45px; object-fit: cover;">
                                             <div>
-                                                <div class="fw-bold text-dark">{{ $t->student->name }}</div>
+                                                <div class="fw-bold text-primary">{{ $t->student->name }}</div>
                                                 <div class="text-muted small"><i class="fas fa-id-badge"></i>
                                                     {{ $t->student->uuid }}</div>
                                             </div>
@@ -45,7 +45,7 @@
                                     </td>
                                     <td>
                                         @if ($t->from_date && $t->to_date)
-                                            <div class="fw-bold text-dark">
+                                            <div class="fw-bold text-body-emphasis">
                                                 {{ \Carbon\Carbon::parse($t->from_date)->format('d/m/Y') }}
                                                 <i class="fas fa-arrow-right mx-1 text-muted">-</i>
                                                 {{ \Carbon\Carbon::parse($t->to_date)->format('d/m/Y') }}

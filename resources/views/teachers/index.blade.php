@@ -16,25 +16,25 @@
         </div>
     </div>
 
-    <div class="card border-0 shadow-sm">
-        <div class="card-body">
+    <div class="card border-0 shadow-sm rounded-3">
+        <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead class="table-light">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
                         <tr>
-                            <th>Mã GV</th>
+                            <th class="ps-4">Mã GV</th>
                             <th>Tên Giảng viên</th>
                             <th>Số điện thoại</th>
                             <th>Email</th>
                             <th>Trạng thái</th>
-                            <th class="text-center">Thao tác</th>
+                            <th class="text-center pe-4">Thao tác</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($teachers as $teacher)
                             <tr id="row-{{ $teacher->id }}">
-                                <td class="fw-bold text-primary">{{ $teacher->teacher_code }}</td>
-                                <td class="fw-bold">{{ $teacher->name }}</td>
+                                <td class="ps-4 fw-bold text-primary">{{ $teacher->teacher_code }}</td>
+                                <td class="fw-bold text-primary">{{ $teacher->name }}</td>
                                 <td>{{ $teacher->phone }}</td>
                                 <td>{{ $teacher->email ?? '<span class="text-muted fst-italic">Chưa cập nhật</span>' }}</td>
                                 <td>
@@ -46,7 +46,7 @@
                                         <span class="badge bg-secondary">Ngừng dạy</span>
                                     @endif
                                 </td>
-                                <td class="text-center">
+                                <td class="text-center pe-4">
                                     <button class="btn btn-sm btn-outline-primary mx-1" onclick="openEditModal({{ $teacher->id }})">Sửa</button>
                                     <button class="btn btn-sm btn-outline-danger" onclick="deleteTeacher({{ $teacher->id }})">Xóa</button>
                                 </td>
