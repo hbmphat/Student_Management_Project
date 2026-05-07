@@ -22,6 +22,10 @@ Route::middleware('auth')->group(function () {
     // ===== PROFILE =====
     Route::post('/profile/change-password', [App\Http\Controllers\HomeController::class, 'changePassword'])->name('profile.change-password');
 
+    // ===== BACKUP =====
+    Route::post('/backup/download', [App\Http\Controllers\BackupController::class, 'download'])->name('backup.download');
+    Route::get('/backup/download-file', [App\Http\Controllers\BackupController::class, 'downloadFile'])->name('backup.download-file');
+
     // ===== COURSES =====
     Route::get('/courses/export-pdf', [App\Http\Controllers\CourseController::class, 'exportPdf'])->name('courses.export-pdf');
     Route::resource('courses', App\Http\Controllers\CourseController::class);

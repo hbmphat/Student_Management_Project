@@ -36,12 +36,14 @@
 
     @stack('modals')
 
+    @include('layouts.admin._modalBackup')
     @include('layouts.admin._modalRegistrationCode')
     @include('systems.change_password')
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @include('layouts.admin._script_backup')
     @push('scripts')
         <script>
             window.showToast = function(message, icon = 'success', title = 'Thông báo', options = {}) {
@@ -110,11 +112,34 @@
                 const sidebarOverlay = document.getElementById('sidebarOverlay');
                 const toggleSidebarButton = document.getElementById('btn-toggle-sidebar');
                 const settingsButton = document.getElementById('btn-settings');
+                const backupButton = document.getElementById('btn-backup');
 
                 if (settingsButton) {
                     settingsButton.addEventListener('click', function(event) {
                         event.preventDefault();
                         window.toggleSettings();
+                    });
+                }
+
+                if (backupButton) {
+                    backupButton.addEventListener('click', function(event) {
+                        event.preventDefault();
+
+                        const passwordInput = document.getElementById('backup_confirm_password');
+                        const passwordError = document.getElementById('backup_password_error');
+
+                        if (passwordInput) {
+                            passwordInput.value = '';
+                            passwordInput.classList.remove('is-invalid');
+                        }
+
+                        if (passwordError) {
+                            passwordError.textContent = '';
+                        }
+
+                        if (typeof showBootstrapModal === 'function') {
+                            showBootstrapModal('#backupModal');
+                        }
                     });
                 }
 

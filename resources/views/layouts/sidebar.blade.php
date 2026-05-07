@@ -68,7 +68,7 @@
                 </a>
                 
                 @if(Auth::user()->role === 'admin')
-                    <a href="#" class="sub-item" onclick="#">
+                    <a href="#" class="sub-item" id="btn-backup">
                         <span class="material-symbols-outlined fs-5">cloud_download</span>
                         <span>Backup dữ liệu</span>
                     </a>
